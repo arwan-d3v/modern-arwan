@@ -6,6 +6,7 @@ import { auth } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 import { Lock, Mail, LogIn } from "lucide-react";
 import Link from "next/link";
+import { FirebaseError } from "firebase/app";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -18,8 +19,12 @@ export default function LoginPage() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       router.push("/dashboard");
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      if (err instanceof FirebaseError) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred.");
+      }
     }
   };
 
@@ -28,8 +33,12 @@ export default function LoginPage() {
     try {
       await signInWithPopup(auth, provider);
       router.push("/dashboard");
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      if (err instanceof FirebaseError) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred.");
+      }
     }
   };
 

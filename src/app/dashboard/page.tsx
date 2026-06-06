@@ -5,21 +5,21 @@ import {
   Server,
   Activity,
   Cpu,
-  ShieldCheck,
-  Globe,
-  TrendingUp,
+  Zap,
   Clock,
-  Zap
+  Layout,
+  FileText,
+  ShieldAlert
 } from "lucide-react";
 import FadeIn from "@/components/FadeIn";
+import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
 
 interface SystemMetrics {
   vpsUptime: string;
   networkPing: string;
   mt5Status: "ONLINE" | "OFFLINE" | "ERROR";
   activeScripts: number;
-  cpuLoad: string;
-  memUsage: string;
 }
 
 const metrics: SystemMetrics = {
@@ -27,19 +27,20 @@ const metrics: SystemMetrics = {
   networkPing: "12ms",
   mt5Status: "ONLINE",
   activeScripts: 4,
-  cpuLoad: "14%",
-  memUsage: "1.2GB / 4GB"
 };
 
 export default function DashboardPage() {
+  const { profile } = useAuth();
+  const isSuperUser = profile?.role === 'SUPER_USER' || !process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+
   return (
     <div className="max-w-7xl mx-auto px-6 md:px-12 py-10 space-y-8">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-text-primary">COMMAND_CENTER</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-text-primary uppercase">COMMAND_CENTER</h1>
           <p className="text-text-secondary font-mono text-xs uppercase tracking-widest mt-1">
-            Secure Node: VPS-GLOBAL-01 // User: Admin
+            Secure Node: VPS-GLOBAL-01 // Role: {profile?.role || 'GUEST'}
           </p>
         </div>
         <div className="flex gap-4">
@@ -48,6 +49,25 @@ export default function DashboardPage() {
             <span className="font-mono text-sm">23:44:12 UTC</span>
           </div>
         </div>
+      </div>
+
+      {/* Navigation Tools */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <ToolLink
+          href="/tools/cv-builder"
+          icon={<FileText size={20} />}
+          title="CV_CONSTRUCTOR"
+          desc="ATS-Optimized Resumes"
+        />
+        {isSuperUser && (
+          <ToolLink
+            href="/dashboard/cms"
+            icon={<Layout size={20} />}
+            title="SYSTEM_CMS"
+            desc="Manage Infrastructure Data"
+            accent="purple"
+          />
+        )}
       </div>
 
       {/* Top Metrics Row */}
@@ -74,7 +94,6 @@ export default function DashboardPage() {
 
       {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Columns - Detailed Metrics */}
         <div className="lg:col-span-1 space-y-6">
           <div className="glass p-6 rounded-2xl space-y-6">
             <h3 className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-text-secondary border-b border-surface pb-4">
@@ -87,30 +106,35 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div className="glass p-6 rounded-2xl">
-            <h3 className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-text-secondary border-b border-surface pb-4 mb-4">
-              Active Trading Scripts
-            </h3>
-            <div className="space-y-3">
-              {["ENIGMA_GOLD_V3", "LIQUIDITY_SWEEP", "HFT_ARBITRAGE"].map((script) => (
-                <div key={script} className="flex items-center justify-between p-3 bg-black/20 rounded-lg border border-surface">
-                  <div className="flex items-center gap-3">
-                    <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                    <span className="font-mono text-[10px] font-bold">{script}</span>
-                  </div>
-                  <TrendingUp size={14} className="text-green-500" />
-                </div>
-              ))}
+          {profile?.role === 'GUEST' && process.env.NEXT_PUBLIC_FIREBASE_API_KEY && (
+            <div className="bg-accent-purple/10 border border-accent-purple/20 p-6 rounded-2xl flex gap-4">
+              <ShieldAlert className="text-accent-purple shrink-0" size={24} />
+              <div>
+                <p className="text-xs font-bold text-text-primary uppercase tracking-tight">Access Restricted</p>
+                <p className="text-[10px] text-text-secondary mt-1 font-mono uppercase leading-relaxed">
+                  Your account is flagged as GUEST. Technical CRUD nodes are locked.
+                </p>
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
-        {/* Right Columns - Live Terminal */}
         <div className="lg:col-span-2 h-[500px]">
           <LiveTerminalLog />
         </div>
       </div>
     </div>
+  );
+}
+
+function ToolLink({ href, icon, title, desc, accent = "cyan" }: { href: string, icon: React.ReactNode, title: string, desc: string, accent?: "cyan" | "purple" }) {
+  const accentClass = accent === "cyan" ? "text-accent-cyan" : "text-accent-purple";
+  return (
+    <Link href={href} className="glass p-4 rounded-xl hover:bg-surface/80 transition-all group border-l-4 border-l-transparent hover:border-l-current">
+      <div className={`mb-3 ${accentClass} group-hover:scale-110 transition-transform`}>{icon}</div>
+      <div className="font-mono text-xs font-bold tracking-tight">{title}</div>
+      <div className="text-[9px] text-text-secondary font-mono mt-1 uppercase">{desc}</div>
+    </Link>
   );
 }
 
