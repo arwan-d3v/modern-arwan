@@ -29,7 +29,7 @@ export default function CMSPage() {
   const [activeTab, setActiveTab] = useState<'EXPERIENCE' | 'PROJECTS' | 'SKILLS'>('EXPERIENCE');
 
   return (
-    <RoleGuard allowedRoles={['SUPER_USER']}>
+    <RoleGuard allowedRoles={['super_admin']}>
       <div className="max-w-6xl mx-auto px-6 py-10 space-y-8">
         <header>
           <h1 className="text-3xl font-bold tracking-tighter uppercase text-text-primary">SYSTEM_CMS</h1>

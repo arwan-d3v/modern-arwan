@@ -46,7 +46,7 @@ export default function Navbar() {
         <div className="flex items-center gap-1">
           <Link
             href="/dashboard"
-            className={`p-2 hover:bg-white/5 transition-colors group ${pathname.startsWith('/dashboard') ? 'text-accent-cyan' : 'text-text-secondary'}`}
+            className={`p-2 hover:bg-white/5 transition-colors group ${pathname?.startsWith('/dashboard') ? 'text-accent-cyan' : 'text-text-secondary'}`}
             title="DASHBOARD"
           >
             <Activity size={18} className="group-hover:scale-110 transition-transform" />

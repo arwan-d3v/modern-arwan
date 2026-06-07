@@ -1,7 +1,6 @@
 // pages/api/auth/register.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { admin, db as adminDb } from '../../src/lib/firebaseAdmin';
-import { ref, set } from 'firebase/database';
+import { admin, db as adminDb } from '@/lib/firebaseAdmin';
 
 /**
  * POST /api/auth/register
@@ -17,8 +16,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: 'uid is required' });
   }
   try {
-    const userRef = ref(adminDb, `users/${uid}`);
-    const snapshot = await admin.database().ref(`users/${uid}`).once('value');
+    const userRef = adminDb.ref(`users/${uid}`);
+    const snapshot = await userRef.once('value');
     if (snapshot.exists()) {
       // already exists – nothing to do
       return res.status(200).json({ message: 'User already exists' });
@@ -31,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       role: 'user',
       createdAt: Date.now(),
     };
-    await set(userRef, newProfile);
+    await userRef.set(newProfile);
     return res.status(201).json({ message: 'User created' });
   } catch (error: any) {
     console.error('Register error', error);

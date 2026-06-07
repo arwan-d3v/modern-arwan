@@ -32,7 +32,7 @@ export default function DashboardPage() {
     updatedAt: Timestamp.now()
   });
 
-  const isSuperUser = profile?.role === 'SUPER_USER' || !process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+  const isSuperUser = profile?.role === 'super_admin' || !process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
 
   useEffect(() => {
     if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY) return;
@@ -131,7 +131,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {profile?.role === 'GUEST' && process.env.NEXT_PUBLIC_FIREBASE_API_KEY && (
+          {profile?.role === 'guest' && process.env.NEXT_PUBLIC_FIREBASE_API_KEY && (
             <div className="bg-accent-purple/5 border border-accent-purple/20 p-6 rounded-none flex gap-4">
               <ShieldAlert className="text-accent-purple shrink-0" size={24} />
               <div>

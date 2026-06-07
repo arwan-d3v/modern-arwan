@@ -1,7 +1,6 @@
 // pages/api/admin/updateRole.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { admin, db as adminDb } from '@/src/lib/firebaseAdmin';
-import { ref, update } from 'firebase/database';
+import { admin, db as adminDb } from '@/lib/firebaseAdmin';
 
 /**
  * POST /api/admin/updateRole
@@ -21,8 +20,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
   try {
     // In a production app you would verify the requester is a super_admin via session token.
-    const userRef = ref(adminDb, `users/${uid}`);
-    await update(userRef, { role });
+    await adminDb.ref(`users/${uid}`).update({ role });
     return res.status(200).json({ message: 'Role updated' });
   } catch (error: any) {
     console.error('Update role error', error);

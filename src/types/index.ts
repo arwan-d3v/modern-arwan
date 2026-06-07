@@ -8,7 +8,7 @@ export interface UserProfile {
   displayName: string | null;
   photoURL: string | null;
   role: UserRole;
-  createdAt: Timestamp | FieldValue | null;
+  createdAt: Timestamp | FieldValue | number | null;
 }
 
 export interface WorkExperience {
