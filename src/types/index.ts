@@ -16,8 +16,10 @@ export interface WorkExperience {
   type: 'formal' | 'freelance';
   title: string;
   company: string;
+  location: string;
   dates: string;
   description: string;
+  order: number;
 }
 
 export interface ShowcaseProject {
@@ -27,12 +29,31 @@ export interface ShowcaseProject {
   description: string;
   image_url: string;
   live_link: string;
+  github_link?: string;
+  technical_brief?: {
+    integrity: string;
+    encryption: string;
+    access: string;
+  };
+  order: number;
 }
 
 export interface SkillMatrix {
   id?: string;
   category: string;
   skills: string[];
+  order: number;
+}
+
+export interface SystemMetrics {
+  id?: string;
+  vpsUptime: string;
+  networkPing: string;
+  mt5Status: 'ONLINE' | 'OFFLINE' | 'ERROR';
+  cpuLoad: number;
+  memoryUsage: number;
+  storageIO: number;
+  updatedAt: Timestamp | FieldValue;
 }
 
 export interface CVData {

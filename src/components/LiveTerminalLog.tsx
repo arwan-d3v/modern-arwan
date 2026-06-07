@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useImperativeHandle, forwardRef } from "react";
 
 const INITIAL_LOGS = [
   "[SYSTEM] Initialization sequence started...",
@@ -18,18 +18,32 @@ const MOCK_MESSAGES = [
   "[EXEC] Executing algorithmic rebalancing on Portfolio-A",
   "[INFO] Security scan completed: 0 threats found.",
   "[SYSTEM] Kernel integrity verified.",
+  "[EXEC] Logic Martingale: SMC compounding cycle #42 active",
+  "[INFO] Python Script: data_pipeline_v2 executed successfully",
 ];
 
-export default function LiveTerminalLog() {
+export interface TerminalHandle {
+  addLog: (message: string) => void;
+}
+
+const LiveTerminalLog = forwardRef<TerminalHandle>((props, ref) => {
   const [logs, setLogs] = useState<string[]>(INITIAL_LOGS);
   const terminalRef = useRef<HTMLDivElement>(null);
+
+  const addLog = (message: string) => {
+    const timestamp = new Date().toLocaleTimeString([], { hour12: false });
+    setLogs((prev) => [...prev, `[${timestamp}] ${message}`]);
+  };
+
+  useImperativeHandle(ref, () => ({
+    addLog
+  }));
 
   useEffect(() => {
     const interval = setInterval(() => {
       const newMessage = MOCK_MESSAGES[Math.floor(Math.random() * MOCK_MESSAGES.length)];
-      const timestamp = new Date().toLocaleTimeString([], { hour12: false });
-      setLogs((prev) => [...prev, `[${timestamp}] ${newMessage}`]);
-    }, Math.random() * 1500 + 1500); // 1.5 to 3 seconds
+      addLog(newMessage);
+    }, Math.random() * 3000 + 2000);
 
     return () => clearInterval(interval);
   }, []);
@@ -41,13 +55,16 @@ export default function LiveTerminalLog() {
   }, [logs]);
 
   return (
-    <div className="w-full h-full bg-black border border-surface rounded-lg flex flex-col overflow-hidden font-mono text-xs">
+    <div className="w-full h-full bg-black border border-surface rounded-none flex flex-col overflow-hidden font-mono text-[10px]">
       <div className="bg-surface/30 px-4 py-2 border-b border-surface flex justify-between items-center">
-        <span className="text-text-secondary uppercase tracking-widest text-[10px] font-bold">Live System Logs</span>
-        <div className="flex gap-1.5">
-          <div className="w-2 h-2 rounded-full bg-red-500/50" />
-          <div className="w-2 h-2 rounded-full bg-yellow-500/50" />
-          <div className="w-2 h-2 rounded-full bg-green-500/50" />
+        <div className="flex items-center gap-2">
+          <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+          <span className="text-text-secondary uppercase tracking-[0.2em] font-bold">Live_System_Logs</span>
+        </div>
+        <div className="flex gap-1.5 opacity-30">
+          <div className="w-2 h-2 rounded-full bg-white/20" />
+          <div className="w-2 h-2 rounded-full bg-white/20" />
+          <div className="w-2 h-2 rounded-full bg-white/20" />
         </div>
       </div>
       <div
@@ -56,8 +73,13 @@ export default function LiveTerminalLog() {
       >
         {logs.map((log, index) => (
           <div key={index} className="flex gap-2">
-            <span className="text-accent-cyan opacity-50 shrink-0">{">"}</span>
-            <span className={log.includes("[SUCCESS]") ? "text-green-400" : log.includes("[WARN]") ? "text-yellow-400" : log.includes("[EXEC]") ? "text-accent-purple" : "text-text-primary"}>
+            <span className="text-accent-cyan opacity-40 shrink-0">TERMINAL:</span>
+            <span className={
+              log.includes("[SUCCESS]") ? "text-green-400" :
+              log.includes("[WARN]") ? "text-yellow-400" :
+              log.includes("[EXEC]") ? "text-accent-purple" :
+              "text-text-primary"
+            }>
               {log}
             </span>
           </div>
@@ -73,7 +95,6 @@ export default function LiveTerminalLog() {
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
           background: #161618;
-          border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
           background: #00F2FF;
@@ -81,4 +102,7 @@ export default function LiveTerminalLog() {
       `}</style>
     </div>
   );
-}
+});
+
+LiveTerminalLog.displayName = "LiveTerminalLog";
+export default LiveTerminalLog;

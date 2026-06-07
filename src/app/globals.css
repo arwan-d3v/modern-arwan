@@ -8,9 +8,14 @@
   --background-end-rgb: 10, 10, 10;
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-start-rgb));
+@layer base {
+  body {
+    @apply bg-background text-text-primary antialiased selection:bg-accent-cyan/30;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-sans;
+  }
 }
 
 @layer utilities {
@@ -18,7 +23,33 @@ body {
     @apply bg-surface/50 backdrop-blur-md border border-surface;
   }
 
-  .text-balance {
-    text-wrap: balance;
+  .glass-hover {
+    @apply transition-all duration-300;
   }
+  .glass-hover:hover {
+    @apply bg-surface/70 border-accent-cyan/30;
+    box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+  }
+
+  .glass-purple-hover {
+    @apply transition-all duration-300;
+  }
+  .glass-purple-hover:hover {
+    @apply bg-surface/70 border-accent-purple/30;
+    box-shadow: 0 0 15px rgba(138, 43, 226, 0.2);
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-surface border-2 border-background rounded-full;
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-accent-cyan;
 }
