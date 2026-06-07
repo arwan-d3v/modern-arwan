@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Terminal, Lock, Activity, Layout } from "lucide-react";
+import { Terminal, Lock, Activity, Layout, Users } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
 import { usePathname } from "next/navigation";
