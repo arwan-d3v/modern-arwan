@@ -1,6 +1,6 @@
 # Antigravity Agent Update Log
 
-**Generated on:** 2026-06-08T07:15:00+08:00
+**Generated on:** 2026-06-08T07:39:00+08:00
 
 ## ✅ Completed Changes
 
@@ -9,8 +9,14 @@
 | `.env.local` | Added Firebase configuration keys (`NEXT_PUBLIC_FIREBASE_API_KEY`, `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`, `NEXT_PUBLIC_FIREBASE_DATABASE_URL`, `NEXT_PUBLIC_FIREBASE_PROJECT_ID`, `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET`, `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`, `NEXT_PUBLIC_FIREBASE_APP_ID`). | 2026-06-07T20:10:01Z |
 | `jules-agent-update.md` | Appended **ENVIRONMENT SETUP** section with instructions to create `.env.local`, populate variables, and configure Vercel environment variables. | 2026-06-07T20:10:23Z |
 | `.github/workflows/ci.yml` | Added GitHub Actions CI workflow (npm install, lint, build) | 2026-06-07T20:29:12Z |
-| `src/components/Navbar.tsx` | Fixed `ReferenceError: Users is not defined` by importing `Users` from `lucide-react`. | 2026-06-07T23:13:00Z |
-| Git Push | Pushed commit `acc5430` to remote tracking branch `origin/feature/new-saas-pivot`. | 2026-06-07T23:13:11Z |
+| `src/components/Navbar.tsx` | Fixed `ReferenceError: Users is not defined` (imported `Users` from `lucide-react`) and resolved `pathname` possibly null type checking warning. | 2026-06-07T23:37:32Z |
+| `pages/api/admin/updateRole.ts` | Refactored to use Firebase Admin SDK directly, fixing import paths and type mismatch with client-side SDK. | 2026-06-07T23:36:23Z |
+| `pages/api/auth/register.ts` | Refactored to use Firebase Admin SDK directly, fixing import paths and type mismatch with client-side SDK. | 2026-06-07T23:36:27Z |
+| `src/lib/firebaseAdmin.ts` | Updated initialization to use `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL`, and `FIREBASE_PRIVATE_KEY` with a non-blocking `fs` dynamic check for local fallback. | 2026-06-07T23:36:32Z |
+| `src/app/dashboard/cms/page.tsx` | Fixed `UserRole` type check error: changed `'SUPER_USER'` to `'super_admin'`. | 2026-06-07T23:36:51Z |
+| `src/app/dashboard/page.tsx` | Fixed `UserRole` type check errors: changed `'SUPER_USER'` to `'super_admin'` and `'GUEST'` to `'guest'`. | 2026-06-07T23:37:19Z |
+| `src/types/index.ts` | Updated `UserProfile.createdAt` union type to include `number` to support epoch timestamp formats. | 2026-06-07T23:37:56Z |
+
 
 
 ## 📦 Package & Workflow Consistency Check
