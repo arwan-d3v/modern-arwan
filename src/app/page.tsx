@@ -2,6 +2,7 @@ import FadeIn from "@/components/FadeIn";
 import { Server, Zap, Shield, Terminal } from "lucide-react";
 import ExperienceSection from "@/components/ExperienceSection";
 import ShowcaseSection from "@/components/ShowcaseSection";
+import HeroSlider from "@/components/HeroSlider";
 
 interface StatCardProps {
   label: string;
@@ -39,7 +40,11 @@ export default function Home() {
         </FadeIn>
 
         <FadeIn delay={0.2}>
-          <p className="text-lg md:text-xl text-text-secondary max-w-2xl leading-relaxed mb-12 font-medium">
+          <HeroSlider />
+        </FadeIn>
+
+        <FadeIn delay={0.4}>
+          <p className="text-lg md:text-xl text-text-secondary max-w-2xl leading-relaxed mt-8 mb-12 font-medium">
             Building resilient algorithmic trading systems, automated data pipelines,
             and scalable network infrastructures. Focused on performance, security, and high-frequency execution.
           </p>

@@ -19,7 +19,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: 'Invalid role' });
   }
   try {
-    // In a production app you would verify the requester is a super_admin via session token.
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    const token = authHeader.split('Bearer ')[1];
+    const decodedToken = await admin.auth().verifyIdToken(token);
+    
+    // Check if the requester has super_admin role in RTDB
+    const requesterRef = adminDb.ref(`users/${decodedToken.uid}`);
+    const requesterSnap = await requesterRef.once('value');
+    if (!requesterSnap.exists() || requesterSnap.val().role !== 'super_admin') {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+
     await adminDb.ref(`users/${uid}`).update({ role });
     return res.status(200).json({ message: 'Role updated' });
   } catch (error: any) {
