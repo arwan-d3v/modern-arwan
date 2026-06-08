@@ -26,3 +26,22 @@ Dashboard SaaS "Personal Command Center" dirancang sebagai manifestasi digital d
 Semua environment setup telah dipindahkan ke Vercel secara utuh, termasuk `NEXT_PUBLIC_FIREBASE_*` untuk frontend dan `FIREBASE_*` untuk backend admin.
 
 *Note for Agents: Use this document to understand the application logic, roles, and the next steps for system evolution.*
+
+## 5. RECENT UPDATES (Role-Based Access Control Workflow)
+**Modified On:** 2026-06-08T20:00:00+08:00 (WITA)
+
+### Role Workflow Enhancements
+Diimplementasikan pembatasan akses UI end-to-end sesuai dengan standar yang ditentukan:
+1. **Public:** Dapat mengakses landing page dan `/login` tanpa terautentikasi. RoleGuard memastikan routing internal dicegah bagi user yang belum login.
+2. **Guest:** Dapat login dan melihat dashboard. Modul fungsional spesifik seperti **Network Scanner** dan **Threat Defense** disembunyikan dibalik overlay merah bertuliskan "LOCKED - GUEST RESTRICTED". Role baru default bagi akun tanpa privileges.
+3. **Family:** Hak akses Read-Only. Di dashboard, role Family dapat melihat UI animasi *simulated data* untuk "Scanning..." dan "Monitoring...", tetapi tidak diberikan akses modifikasi.
+4. **Super Admin:** Akses penuh untuk melihat data dan mengubah konfigurasi CMS maupun role pengguna.
+
+### Perubahan File Codebase:
+- `src/types/index.ts`: Menyesuaikan type definition menjadi `'public' | 'guest' | 'family' | 'super_admin'`.
+- `src/context/AuthContext.tsx`: Mengubah logic default sign up menjadi `'guest'` (dari sebelumnya `'user'`).
+- `src/components/RoleGuard.tsx` & `src/components/Navbar.tsx`: Penyesuaian pengecekan level role agar sesuai type baru.
+- `src/app/dashboard/page.tsx`: Penambahan *conditional rendering* uppercase label role pada UI dan implementasi *interactive simulated module* bagi Family/Super Admin serta overlay restricted untuk Guest.
+- `src/app/dashboard/users/page.tsx` & `src/app/login/page.tsx`: Penyesuaian nama select dropdown menu dan route guard dari `'user'` ke `'family'`.
+
+Semua perubahan sudah ditest untuk proses build tanpa error `app/no-app` terkait inisialisasi Firebase fallback lokal.

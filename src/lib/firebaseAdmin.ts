@@ -33,9 +33,17 @@ if (!admin.apps.length) {
         });
       } else {
         console.warn('Firebase Admin credentials file not found at:', credentialsPath);
+        admin.initializeApp({
+            projectId: "dummy-project-id",
+            databaseURL: "https://dummy-project-id.firebaseio.com"
+        });
       }
     } catch (error) {
       console.warn('Firebase Admin credentials not found in environment or fallback file.', error);
+      admin.initializeApp({
+            projectId: "dummy-project-id",
+            databaseURL: "https://dummy-project-id.firebaseio.com"
+      });
     }
   }
 }

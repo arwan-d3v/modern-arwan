@@ -85,7 +85,7 @@ export default function UsersManagementPage() {
                     </td>
                     <td className="p-4 text-white/70">{u.email}</td>
                     <td className="p-4">
-                      <span className={`px-2 py-1 rounded text-xs ${u.role === 'super_admin' ? 'bg-red-500/20 text-red-400' : u.role === 'user' ? 'bg-accent-cyan/20 text-accent-cyan' : 'bg-white/10'}`}>
+                      <span className={`px-2 py-1 rounded text-xs ${u.role === 'super_admin' ? 'bg-red-500/20 text-red-400' : u.role === 'family' ? 'bg-accent-cyan/20 text-accent-cyan' : 'bg-white/10'}`}>
                         {u.role}
                       </span>
                     </td>
@@ -95,7 +95,8 @@ export default function UsersManagementPage() {
                         onChange={(e) => handleRoleUpdate(u.uid, e.target.value as UserRole)}
                         className="bg-background border border-white/20 p-2 rounded text-sm outline-none"
                       >
-                        <option value="user">User</option>
+                        <option value="family">Family</option>
+                        <option value="public">Public</option>
                         <option value="super_admin">Super Admin</option>
                         <option value="guest">Guest</option>
                       </select>
