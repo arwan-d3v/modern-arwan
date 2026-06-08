@@ -7,7 +7,7 @@ export default function StudioPage() {
   const { profile } = useAuth();
 
   return (
-    <RoleGuard allowedRoles={['super_admin', 'user']}>
+    <RoleGuard allowedRoles={['super_admin', 'family']}>
       <div className="min-h-screen bg-background p-8 text-foreground">
         <div className="max-w-4xl mx-auto">
           <header className="mb-8 border-b border-white/10 pb-4">

@@ -49,7 +49,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } else {
           // Fallback: if the logged‑in email matches the known super‑admin address, grant super_admin
           const adminEmail = 'admin@krx.com';
-          const role = user.email?.toLowerCase() === adminEmail ? 'super_admin' : 'user';
+          const role = user.email?.toLowerCase() === adminEmail ? 'super_admin' : 'guest';
           const newProfile: UserProfile = {
             uid: user.uid,
             email: user.email,

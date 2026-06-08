@@ -9,6 +9,7 @@ import {
   Clock,
   Layout,
   FileText,
+  Lock,
   ShieldAlert,
   Database
 } from "lucide-react";
@@ -55,7 +56,7 @@ export default function DashboardPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tighter text-text-primary uppercase">COMMAND_CENTER</h1>
           <p className="text-text-secondary font-mono text-[10px] uppercase tracking-[0.2em] mt-1">
-            Secure Node: VPS-GLOBAL-01 {" // "} Role: {profile?.role || 'GUEST'} {" // "} Status: <span className="text-accent-cyan">CONNECTED</span>
+            Secure Node: VPS-GLOBAL-01 {" // "} Role: [ {(profile?.role || 'GUEST').toUpperCase().replace('_', ' ')} ] {" // "} Status: <span className="text-accent-cyan">CONNECTED</span>
           </p>
         </div>
         <div className="flex gap-4">
@@ -83,15 +84,55 @@ export default function DashboardPage() {
             accent="purple"
           />
         )}
-        <div className="glass p-4 rounded-none opacity-40 cursor-not-allowed border-dashed">
-           <Database size={20} className="mb-3" />
-           <div className="font-mono text-xs font-bold">NETWORK_SCANNER</div>
-           <div className="text-[9px] font-mono mt-1">MODULE_LOCKED</div>
+
+        {/* Network Scanner */}
+        <div className="relative overflow-hidden group">
+          <div className="glass p-4 rounded-none h-full border-accent-cyan/20">
+             <Database size={20} className="mb-3 text-accent-cyan group-hover:scale-110 transition-transform" />
+             <div className="font-mono text-xs font-bold uppercase">NETWORK_SCANNER</div>
+             {profile?.role === 'family' || profile?.role === 'super_admin' ? (
+                <div className="mt-2">
+                  <div className="text-[9px] font-mono text-accent-cyan animate-pulse">STATUS: SCANNING...</div>
+                  <div className="w-full bg-white/5 h-1 mt-2 relative overflow-hidden">
+                    <div className="absolute top-0 bottom-0 w-1/3 bg-accent-cyan shadow-[0_0_10px_#00F2FF] animate-[slide_2s_ease-in-out_infinite]" />
+                  </div>
+                </div>
+             ) : (
+                <div className="text-[9px] font-mono mt-1 text-text-secondary">MODULE_LOCKED</div>
+             )}
+          </div>
+          {profile?.role === 'guest' && (
+            <div className="absolute inset-0 bg-red-900/40 backdrop-blur-sm border border-red-500/50 flex flex-col items-center justify-center z-10 transition-opacity">
+               <ShieldAlert size={16} className="text-red-500 mb-1" />
+               <span className="font-mono text-[9px] font-bold text-red-500 uppercase tracking-widest text-center px-2">LOCKED - GUEST RESTRICTED</span>
+            </div>
+          )}
         </div>
-        <div className="glass p-4 rounded-none opacity-40 cursor-not-allowed border-dashed">
-           <ShieldAlert size={20} className="mb-3" />
-           <div className="font-mono text-xs font-bold">THREAT_DEFENSE</div>
-           <div className="text-[9px] font-mono mt-1">OFFLINE</div>
+
+        {/* Threat Defense */}
+        <div className="relative overflow-hidden group">
+          <div className="glass p-4 rounded-none h-full border-accent-purple/20">
+             <ShieldAlert size={20} className="mb-3 text-accent-purple group-hover:scale-110 transition-transform" />
+             <div className="font-mono text-xs font-bold uppercase">THREAT_DEFENSE</div>
+             {profile?.role === 'family' || profile?.role === 'super_admin' ? (
+                <div className="mt-2">
+                  <div className="text-[9px] font-mono text-accent-purple animate-pulse">STATUS: MONITORING...</div>
+                  <div className="flex gap-1 mt-2">
+                    {[1,2,3].map(i => (
+                      <div key={i} className={`h-1.5 w-1.5 rounded-full bg-accent-purple shadow-[0_0_8px_#8A2BE2] animate-ping`} style={{animationDelay: `${i * 0.2}s`}} />
+                    ))}
+                  </div>
+                </div>
+             ) : (
+                <div className="text-[9px] font-mono mt-1 text-text-secondary">OFFLINE</div>
+             )}
+          </div>
+          {profile?.role === 'guest' && (
+            <div className="absolute inset-0 bg-red-900/40 backdrop-blur-sm border border-red-500/50 flex flex-col items-center justify-center z-10 transition-opacity">
+               <Lock size={16} className="text-red-500 mb-1" />
+               <span className="font-mono text-[9px] font-bold text-red-500 uppercase tracking-widest text-center px-2">LOCKED - GUEST RESTRICTED</span>
+            </div>
+          )}
         </div>
       </div>
 

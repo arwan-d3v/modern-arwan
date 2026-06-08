@@ -21,7 +21,7 @@ export default function RoleGuard({ children, allowedRoles }: RoleGuardProps) {
     if (!loading && !isDevBypass) {
       if (!profile) {
         router.push("/login");
-      } else if (!allowedRoles.includes(profile.role)) {
+      } else if (!allowedRoles.includes(profile.role as UserRole)) {
         router.push("/dashboard");
       }
     }
@@ -40,7 +40,7 @@ export default function RoleGuard({ children, allowedRoles }: RoleGuardProps) {
 
   if (isDevBypass) return <>{children}</>;
 
-  if (profile && allowedRoles.includes(profile.role)) {
+  if (profile && allowedRoles.includes(profile.role as UserRole)) {
     return <>{children}</>;
   }
 
