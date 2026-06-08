@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import { motion, useMotionValue, useTransform } from "framer-motion";
+import Image from "next/image";
 
 export default function HeroSlider() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -14,47 +15,57 @@ export default function HeroSlider() {
   }, [x]);
 
   const clipPathPremium = useTransform(x, (value) => `inset(0 0 0 ${value}px)`);
+  const clipPathStandard = useTransform(x, (value) => `inset(0 calc(100% - ${value}px) 0 0)`);
 
   return (
     <div 
       ref={containerRef}
-      className="relative w-full h-[400px] md:h-[500px] rounded-xl overflow-hidden border border-white/10 select-none my-12 bg-black"
+      className="relative w-full h-[400px] md:h-[600px] rounded-xl overflow-hidden border border-white/10 select-none my-12 bg-black shadow-2xl"
     >
-      {/* Container A: Standard (Grayscale, Blurred) */}
-      <div 
-        className="absolute inset-0 flex flex-col justify-center p-8 transition-all pointer-events-none"
-        style={{ filter: 'grayscale(100%) blur(3px)' }}
-      >
-        <div className="absolute inset-0 bg-slate-900 opacity-80" />
-        <div className="relative z-10">
-          <h2 className="text-4xl md:text-5xl font-bold text-white/70 mb-4">Standard Foundation</h2>
-          <p className="text-lg text-white/50 max-w-lg font-mono">
-            Monolithic structures. Manual provisioning. High latency overhead. Basic security layers.
-          </p>
-          <div className="mt-8 flex gap-4">
-            <div className="w-16 h-16 border border-white/20 bg-white/5 rounded-lg" />
-            <div className="w-16 h-16 border border-white/20 bg-white/5 rounded-lg" />
-          </div>
-        </div>
-      </div>
-
-      {/* Container B: Premium (Original saturation, sharp) */}
+      {/* Container A: Standard (Grayscale, Dull, "Buluk") */}
       <motion.div 
-        className="absolute inset-0 flex flex-col justify-center p-8 bg-[radial-gradient(ellipse_at_right,_var(--tw-gradient-stops))] from-accent-cyan/10 via-slate-900 to-transparent pointer-events-none"
+        className="absolute inset-0 flex flex-col justify-end p-8 pointer-events-none"
+        style={{ clipPath: clipPathStandard }}
+      >
+        <div className="absolute inset-0 grayscale-[100%] contrast-[0.8] brightness-[0.5] sepia-[30%] blur-[2px]">
+          <Image 
+            src="/images/modern_dashboard_ui.png" 
+            alt="Basic Resume UI" 
+            fill 
+            className="object-cover object-top"
+          />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+        <div className="relative z-10 max-w-xl">
+          <h2 className="text-3xl md:text-5xl font-bold text-gray-400 mb-2">Standard Resume</h2>
+          <p className="text-md text-gray-500 font-mono">
+            Dull presentation. Basic formatting. Hard to read. No visual hierarchy.
+          </p>
+        </div>
+      </motion.div>
+
+      {/* Container B: Premium (Colorful, Classy, High Saturation) */}
+      <motion.div 
+        className="absolute inset-0 flex flex-col justify-end p-8 pointer-events-none"
         style={{ clipPath: clipPathPremium }}
       >
-        <div className="absolute inset-0 bg-slate-900/40" />
-        <div className="relative z-10 pl-8">
-          <h2 className="text-4xl md:text-5xl font-bold text-accent-cyan mb-4 drop-shadow-[0_0_15px_rgba(0,242,255,0.5)]">
-            Premium SaaS Pipeline
+        <div className="absolute inset-0 contrast-[1.1] saturate-[1.5] brightness-[1.1]">
+          <Image 
+            src="/images/modern_dashboard_ui.png" 
+            alt="Premium Resume UI" 
+            fill 
+            className="object-cover object-top"
+          />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-accent-cyan/10 to-transparent" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-accent-cyan/20 via-transparent to-transparent mix-blend-overlay" />
+        <div className="relative z-10 max-w-xl">
+          <h2 className="text-3xl md:text-5xl font-bold text-white mb-2 drop-shadow-[0_0_15px_rgba(0,242,255,0.8)]">
+            Premium Experience
           </h2>
-          <p className="text-lg text-white max-w-lg font-mono">
-            Microservices edge. Auto-scaling clusters. Zero-trust security. Real-time telemetry.
+          <p className="text-md text-gray-200 font-sans font-light">
+            Vibrant aesthetics. Neon accents. Glassmorphism UI. Instant professional impact.
           </p>
-          <div className="mt-8 flex gap-4">
-            <div className="w-16 h-16 border border-accent-cyan/50 bg-accent-cyan/20 rounded-lg shadow-[0_0_15px_rgba(0,242,255,0.3)]" />
-            <div className="w-16 h-16 border border-purple-500/50 bg-purple-500/20 rounded-lg shadow-[0_0_15px_rgba(168,85,247,0.3)]" />
-          </div>
         </div>
       </motion.div>
 
