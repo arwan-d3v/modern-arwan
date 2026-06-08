@@ -64,7 +64,7 @@ export default function ShowcaseSection() {
             >
               <div className="aspect-video w-full bg-black/40 overflow-hidden mb-6 border border-surface relative">
                 {project.image_url ? (
-                   <Image src={project.image_url} alt={project.title} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" width={600} height={400} unoptimized />
+                   <Image src={project.image_url} alt={project.title} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" fill sizes="(max-width: 768px) 100vw, 50vw" priority={index < 2} />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <Box size={48} className="text-surface" />

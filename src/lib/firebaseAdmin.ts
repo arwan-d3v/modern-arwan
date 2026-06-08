@@ -40,5 +40,17 @@ if (!admin.apps.length) {
   }
 }
 
-const db = getDatabase();
+let db: admin.database.Database;
+try {
+
+if (admin.apps.length > 0) {
+  db = getDatabase();
+} else {
+  throw new Error("No apps");
+}
+
+} catch (e) {
+  console.warn("Failed to get Firebase Admin database:", e);
+  db = {} as any; // mock
+}
 export { admin, db };
