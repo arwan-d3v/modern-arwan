@@ -36,7 +36,7 @@ export default function MediaModal({ project, isOpen, onClose }: MediaModalProps
               {/* Image/Media Side */}
               <div className="md:w-3/5 bg-black flex items-center justify-center border-r border-white/5 relative overflow-hidden">
                 {project.image_url ? (
-                  <Image src={project.image_url} alt={project.title} className="w-full h-full object-cover" width={800} height={600} unoptimized />
+                  <Image src={project.image_url} alt={project.title} className="w-full h-full object-cover" fill sizes="100vw" priority />
                 ) : (
                    <div className="flex flex-col items-center gap-4 opacity-20">
                      <Terminal size={80} />

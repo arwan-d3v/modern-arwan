@@ -1,8 +1,11 @@
+"use client";
 import FadeIn from "@/components/FadeIn";
+import { motion } from "framer-motion";
 import { Server, Zap, Shield, Terminal } from "lucide-react";
 import ExperienceSection from "@/components/ExperienceSection";
 import ShowcaseSection from "@/components/ShowcaseSection";
-import HeroSlider from "@/components/HeroSlider";
+import dynamic from "next/dynamic";
+const HeroSlider = dynamic(() => import("@/components/HeroSlider"), { ssr: false });
 
 interface StatCardProps {
   label: string;
@@ -12,11 +15,12 @@ interface StatCardProps {
 }
 
 const StatCard = ({ label, value, icon, delay = 0 }: StatCardProps) => (
-  <FadeIn delay={delay} className="glass p-6 rounded-none flex flex-col gap-4 border-accent-cyan/10">
-    <div className="text-accent-cyan">{icon}</div>
-    <div>
-      <div className="text-3xl font-mono font-bold text-text-primary tracking-tighter">{value}</div>
-      <div className="text-[10px] font-mono uppercase tracking-[0.2em] text-text-secondary font-bold">{label}</div>
+  <FadeIn delay={delay} className="glass-hover p-6 rounded-none flex flex-col gap-4 border border-surface relative overflow-hidden group">
+    <div className="absolute inset-0 bg-gradient-to-br from-surface to-transparent opacity-50 z-0 pointer-events-none" />
+    <div className="text-accent-cyan z-10">{icon}</div>
+    <div className="z-10">
+      <div className="text-3xl font-mono font-bold text-text-primary tracking-tighter drop-shadow-sm">{value}</div>
+      <div className="text-[10px] font-mono uppercase tracking-[0.2em] text-text-secondary font-bold mt-1 group-hover:text-accent-cyan transition-colors">{label}</div>
     </div>
   </FadeIn>
 );
@@ -49,6 +53,28 @@ export default function Home() {
             and scalable network infrastructures. Focused on performance, security, and high-frequency execution.
           </p>
         </FadeIn>
+
+        <FadeIn delay={0.5}>
+          <div className="flex flex-col sm:flex-row gap-6 mt-8 mb-16">
+            <motion.a
+              href="/dashboard"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="bg-accent-cyan text-black px-8 py-4 rounded-none font-bold font-mono text-sm tracking-widest uppercase flex items-center justify-center shadow-cyan-glow hover:bg-accent-cyan/90 transition-colors"
+            >
+              Access Dashboard
+            </motion.a>
+            <motion.a
+              href="#showcase"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="border border-text-secondary text-text-primary px-8 py-4 rounded-none font-bold font-mono text-sm tracking-widest uppercase flex items-center justify-center hover:border-accent-cyan hover:text-accent-cyan transition-colors"
+            >
+              View Architecture
+            </motion.a>
+          </div>
+        </FadeIn>
+
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <StatCard
