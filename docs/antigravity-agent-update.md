@@ -1,6 +1,6 @@
 # Antigravity Agent Update Log
 
-**Generated on:** 2026-06-08T11:53:00Z (UTC)
+**Generated on:** 2026-06-12T08:29:00Z (UTC)
 
 ## ✅ Completed Changes (Deployments & Fixes)
 
@@ -10,6 +10,7 @@
 | `src/lib/firebaseAdmin.ts` | Updated initialization to use `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL`, and `FIREBASE_PRIVATE_KEY` with a non-blocking `fs` dynamic check for local fallback. | 2026-06-07T23:36:32Z |
 | `src/components/HeroSlider.tsx` | Replaced text placeholders with a generated modern SaaS UI image. Applied dynamic CSS filters (grayscale, blur vs saturate, high contrast) and fixed a visual text overlap bug during sliding by using dynamic `clip-path` for the standard layer. | 2026-06-08T11:29:00Z |
 | `Vercel Deployment` | Identified build error related to `firebase-admin` missing credentials. Guided user to successfully add `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL`, and `FIREBASE_PRIVATE_KEY` into Vercel Environment Variables. | 2026-06-08T11:45:00Z |
+| `src/components/Navbar.tsx` | Implemented public-friendly UI: Grouped Dashboard/Admin menus into a hover dropdown ('CONSOLE'), replaced Lock icon with Google Auth Profile picture upon login, and added Profile dropdown menu. | 2026-06-12T08:29:00Z |
 
 ## 📦 System State
 
