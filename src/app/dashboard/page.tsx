@@ -9,6 +9,7 @@ import {
   Clock,
   Layout,
   FileText,
+  Mail,
   Lock,
   ShieldAlert,
   Database
@@ -74,6 +75,12 @@ export default function DashboardPage() {
           icon={<FileText size={20} />}
           title="CV_CONSTRUCTOR"
           desc="ATS-Optimized Resumes"
+        />
+        <ToolLink
+          href="/tools/cover-letter"
+          icon={<Mail size={20} />}
+          title="CL_CONSTRUCTOR"
+          desc="ATS Cover Letters"
         />
         {isSuperUser && (
           <ToolLink

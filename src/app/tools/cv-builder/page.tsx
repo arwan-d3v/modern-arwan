@@ -12,11 +12,20 @@ import {
   FileText,
   Printer,
   MonitorOff,
-  AlertCircle
+  AlertCircle,
+  History,
+  X
 } from "lucide-react";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { CVData } from "@/types";
 import FadeIn from "@/components/FadeIn";
+
+interface CVHistoryItem {
+  id: string;
+  date: string;
+  title: string;
+  data: CVData;
+}
 
 const DEFAULT_DATA: CVData = {
   personalInfo: {
@@ -55,6 +64,8 @@ export default function CVBuilderPage() {
   const [step, setStep] = useState(1);
   const [template, setTemplate] = useState<'ATS' | 'MODERN'>('MODERN');
   const [isMobile, setIsMobile] = useState(false);
+  const [history, setHistory] = useState<CVHistoryItem[]>([]);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -62,10 +73,16 @@ export default function CVBuilderPage() {
     };
     checkMobile();
     window.addEventListener('resize', checkMobile);
+
+    const saved = localStorage.getItem('cv_history');
+    if (saved) {
+      try { setHistory(JSON.parse(saved)); } catch (e) {}
+    }
+
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const { register, control, watch, handleSubmit } = useForm<CVData>({
+  const { register, control, watch, handleSubmit, reset } = useForm<CVData>({
     defaultValues: DEFAULT_DATA,
   });
 
@@ -87,6 +104,16 @@ export default function CVBuilderPage() {
   const watchedData = watch();
 
   const handlePrint = () => {
+    const newItem: CVHistoryItem = {
+      id: Date.now().toString(),
+      date: new Date().toLocaleString(),
+      title: watchedData.personalInfo.fullName + " - " + watchedData.personalInfo.title,
+      data: watchedData
+    };
+    const updatedHistory = [newItem, ...history].slice(0, 20); // Keep last 20
+    setHistory(updatedHistory);
+    localStorage.setItem('cv_history', JSON.stringify(updatedHistory));
+    
     window.print();
   };
 
@@ -120,10 +147,17 @@ export default function CVBuilderPage() {
         <div className="h-screen overflow-y-auto p-8 md:p-12 border-r border-surface custom-scrollbar print:hidden">
           <div className="max-w-xl mx-auto space-y-12">
             <header className="space-y-4">
-              <div className="flex items-center gap-2 font-mono text-[10px] font-bold text-accent-cyan tracking-[0.2em] uppercase">
-                <FileText size={14} /> CV_CONSTRUCTOR_V2.1
+              <div className="flex justify-between items-start">
+                <div>
+                  <div className="flex items-center gap-2 font-mono text-[10px] font-bold text-accent-cyan tracking-[0.2em] uppercase">
+                    <FileText size={14} /> CV_CONSTRUCTOR_V2.1
+                  </div>
+                  <h1 className="text-4xl font-bold tracking-tighter uppercase mt-2">Generate_Resume</h1>
+                </div>
+                <button onClick={() => setIsHistoryOpen(true)} className="flex items-center gap-2 font-mono text-[10px] font-bold uppercase border border-surface bg-surface text-text-secondary px-4 py-2 hover:border-accent-cyan/50 hover:text-accent-cyan transition-colors">
+                   <History size={14} /> PROJECT_VAULT
+                </button>
               </div>
-              <h1 className="text-4xl font-bold tracking-tighter uppercase">Generate_Resume</h1>
               <div className="flex gap-4">
                 <button
                   onClick={() => setTemplate('ATS')}
@@ -152,7 +186,10 @@ export default function CVBuilderPage() {
                   </div>
                   <FormInput label="Location" {...register("personalInfo.location")} />
                   <FormInput label="Professional Title" {...register("personalInfo.title")} />
-                  <FormTextarea label="Professional Summary" {...register("personalInfo.summary")} />
+                  <div>
+                    <FormTextarea label="Professional Summary" {...register("personalInfo.summary")} />
+                    <FormattingHint />
+                  </div>
                 </div>
               )}
 
@@ -174,7 +211,10 @@ export default function CVBuilderPage() {
                         <FormInput label="Start Date" {...register(`experience.${index}.startDate`)} />
                         <FormInput label="End Date" {...register(`experience.${index}.endDate`)} />
                       </div>
-                      <FormTextarea label="Key Contributions" {...register(`experience.${index}.description`)} />
+                      <div>
+                        <FormTextarea label="Key Contributions" {...register(`experience.${index}.description`)} />
+                        <FormattingHint />
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -265,14 +305,94 @@ export default function CVBuilderPage() {
         </div>
       </div>
 
+      {/* History Modal */}
+      {isHistoryOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm print:hidden">
+          <FadeIn className="bg-[#111111] border border-surface w-full max-w-2xl max-h-[80vh] flex flex-col">
+            <div className="p-4 border-b border-surface flex justify-between items-center bg-black/50">
+               <div className="font-mono text-xs font-bold uppercase tracking-widest text-accent-cyan flex items-center gap-2">
+                 <History size={14} /> PROJECT_VAULT_ARCHIVES
+               </div>
+               <button onClick={() => setIsHistoryOpen(false)} className="text-text-secondary hover:text-white"><X size={16} /></button>
+            </div>
+            <div className="p-4 overflow-y-auto space-y-3 custom-scrollbar flex-1">
+               {history.length === 0 ? (
+                 <div className="text-center p-8 text-text-secondary font-mono text-xs uppercase">No archives found in local storage.</div>
+               ) : (
+                 history.map(item => (
+                   <div key={item.id} className="flex justify-between items-center p-4 bg-white/5 border border-surface hover:border-accent-cyan/30 transition-colors group">
+                     <div>
+                       <div className="font-bold text-sm">{item.title}</div>
+                       <div className="text-[10px] font-mono text-text-secondary mt-1">{item.date}</div>
+                     </div>
+                     <div className="flex gap-3">
+                       <button 
+                         onClick={() => {
+                           const newHistory = history.filter(h => h.id !== item.id);
+                           setHistory(newHistory);
+                           localStorage.setItem('cv_history', JSON.stringify(newHistory));
+                         }} 
+                         className="p-2 text-text-secondary hover:text-red-500 transition-colors"
+                       >
+                         <Trash2 size={16} />
+                       </button>
+                       <button 
+                         onClick={() => {
+                           if(window.confirm("Loading this archive will overwrite your current progress. Continue?")) {
+                              reset(item.data);
+                              setIsHistoryOpen(false);
+                           }
+                         }}
+                         className="px-4 py-1.5 font-mono text-[10px] font-bold uppercase bg-white/10 hover:bg-accent-cyan hover:text-black transition-colors"
+                       >
+                         LOAD
+                       </button>
+                     </div>
+                   </div>
+                 ))
+               )}
+            </div>
+          </FadeIn>
+        </div>
+      )}
+
       <style jsx global>{`
+        /* Web-safe ATS Typography & Print Enhancements */
         @media print {
           body { background: white !important; color: black !important; }
+          
+          /* Hide all UI elements entirely during print, but NEVER hide valid headers in the document */
           .print\:hidden { display: none !important; }
-          main { padding: 0 !important; margin: 0 !important; }
-          nav { display: none !important; }
-          @page { size: A4; margin: 0; }
-          * { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
+          nav, button, footer, .ui-controls { display: none !important; }
+          
+          /* Strict A4 page size format with normalized ATS margins */
+          @page { size: A4; margin: 10mm; }
+          
+          * { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; box-shadow: none !important; }
+          
+          /* Orphan/Widow Control - Prevents sections from breaking in half */
+          .cv-print-block, .experience-item, .education-item {
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+            display: block !important;
+          }
+          
+          /* Dynamic Scale Approach / Compression */
+          .cv-print-container {
+            /* Compresses content slightly if it exceeds one page */
+            padding: 0 !important;
+            zoom: 0.95;
+            transform: scale(0.97);
+            transform-origin: top left;
+            font-size: 0.95em !important;
+            line-height: 1.3 !important;
+            width: 100% !important;
+          }
+
+          /* Force ATS-friendly fonts */
+          .cv-print-container, .cv-print-container * {
+             font-family: Arial, Helvetica, Calibri, sans-serif !important;
+          }
         }
       `}</style>
     </ProtectedRoute>
@@ -281,10 +401,31 @@ export default function CVBuilderPage() {
 
 // --- Preview Templates ---
 
+const formatText = (text: string) => {
+  if (typeof text !== 'string') return text;
+  const parts = text.split(/(\*\*\S(?:.*?\S)?\*\*|\*\S(?:.*?\S)?\*|_\S(?:.*?\S)?_|~\S(?:.*?\S)?~)/g);
+  
+  return parts.map((part, index) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={index}>{part.slice(2, -2)}</strong>;
+    }
+    if (part.startsWith('*') && part.endsWith('*')) {
+      return <strong key={index}>{part.slice(1, -1)}</strong>;
+    }
+    if (part.startsWith('_') && part.endsWith('_')) {
+      return <em key={index}>{part.slice(1, -1)}</em>;
+    }
+    if (part.startsWith('~') && part.endsWith('~')) {
+      return <u key={index}>{part.slice(1, -1)}</u>;
+    }
+    return <React.Fragment key={index}>{part}</React.Fragment>;
+  });
+};
+
 function ATSPreview({ data }: { data: CVData }) {
   return (
-    <div className="p-[15mm] font-serif space-y-6 text-[10.5pt] leading-snug">
-      <div className="text-center border-b-[1.5pt] border-black pb-4">
+    <main className="cv-print-container p-[15mm] print:p-0 space-y-6 text-[10.5pt] leading-snug" style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>
+      <header className="cv-print-block text-center border-b-[1.5pt] border-black pb-4" style={{ display: 'block' }}>
         <h1 className="text-2xl font-bold uppercase tracking-tight">{data.personalInfo.fullName}</h1>
         <div className="text-[9pt] mt-2 flex justify-center gap-3">
           <span>{data.personalInfo.location}</span>
@@ -293,49 +434,53 @@ function ATSPreview({ data }: { data: CVData }) {
           <span>•</span>
           <span className="underline">{data.personalInfo.email}</span>
         </div>
-      </div>
+      </header>
 
-      <section className="space-y-2">
+      <section className="cv-print-block space-y-2">
         <h2 className="text-[11pt] font-bold uppercase border-b border-black">Summary</h2>
-        <p className="text-justify">{data.personalInfo.summary}</p>
+        <p className="text-justify">{formatText(data.personalInfo.summary)}</p>
       </section>
 
       <section className="space-y-3">
         <h2 className="text-[11pt] font-bold uppercase border-b border-black">Work Experience</h2>
         <div className="space-y-4">
           {data.experience.map((exp, i) => (
-            <div key={i}>
-              <div className="flex justify-between font-bold">
-                <span>{exp.title}</span>
+            <article key={i} className="cv-print-block experience-item">
+              <header className="flex justify-between font-bold" style={{ display: 'flex' }}>
+                <h3>{exp.title}</h3>
                 <span>{exp.startDate} – {exp.endDate}</span>
-              </div>
+              </header>
               <div className="flex justify-between italic text-[9.5pt]">
                 <span>{exp.company}</span>
                 <span>{exp.location}</span>
               </div>
-              <p className="mt-1 whitespace-pre-line text-justify">{exp.description}</p>
-            </div>
+              <p className="mt-1 whitespace-pre-line text-justify">{formatText(exp.description)}</p>
+            </article>
           ))}
         </div>
       </section>
 
-      <section className="space-y-2">
+      <section className="cv-print-block space-y-2">
         <h2 className="text-[11pt] font-bold uppercase border-b border-black">Technical Skills</h2>
-        <p><strong>Expertise:</strong> {data.skills.map(s => s.name).join(', ')}</p>
+        <ul className="list-none p-0 m-0">
+          <li><strong>Expertise:</strong> {data.skills.map(s => s.name).join(', ')}</li>
+        </ul>
       </section>
 
       <section className="space-y-2">
         <h2 className="text-[11pt] font-bold uppercase border-b border-black">Education</h2>
-        {data.education.map((edu, i) => (
-          <div key={i} className="flex justify-between">
-            <div>
-              <span className="font-bold">{edu.school}</span>, {edu.degree}
-            </div>
-            <span>{edu.year}</span>
-          </div>
-        ))}
+        <ul className="list-none p-0 m-0 space-y-2">
+          {data.education.map((edu, i) => (
+            <li key={i} className="cv-print-block education-item flex justify-between">
+              <div>
+                <span className="font-bold">{edu.school}</span>, {edu.degree}
+              </div>
+              <span>{edu.year}</span>
+            </li>
+          ))}
+        </ul>
       </section>
-    </div>
+    </main>
   );
 }
 
@@ -399,7 +544,7 @@ function ModernPreview({ data }: { data: CVData }) {
             <span className="w-2 h-2 rounded-full" style={{ backgroundColor: accentColor }} />
             Executive_Summary
           </h2>
-          <p className="text-[9.5pt] leading-relaxed text-gray-700">{data.personalInfo.summary}</p>
+          <p className="text-[9.5pt] leading-relaxed text-gray-700">{formatText(data.personalInfo.summary)}</p>
         </section>
 
         <section className="space-y-6">
@@ -416,7 +561,7 @@ function ModernPreview({ data }: { data: CVData }) {
                   <span className="text-[8pt] font-bold text-gray-400">{exp.startDate} – {exp.endDate}</span>
                 </div>
                 <div className="text-[9pt] font-bold mb-3" style={{ color: accentColor }}>{exp.company}</div>
-                <p className="text-[9.5pt] text-gray-600 whitespace-pre-line leading-relaxed">{exp.description}</p>
+                <p className="text-[9.5pt] text-gray-600 whitespace-pre-line leading-relaxed">{formatText(exp.description)}</p>
               </div>
             ))}
           </div>
@@ -478,3 +623,12 @@ const FormTextarea = React.forwardRef<HTMLTextAreaElement, FormTextareaProps>(({
   </div>
 ));
 FormTextarea.displayName = "FormTextarea";
+
+const FormattingHint = () => (
+  <div className="text-[10px] text-text-secondary font-mono mt-1.5 space-y-1 bg-white/5 p-2 border border-surface">
+    <div><span className="font-bold text-accent-cyan uppercase">Supported Formatting:</span></div>
+    <div>Use <code className="text-white bg-black/20 px-1 rounded">**text**</code> or <code className="text-white bg-black/20 px-1 rounded">*text*</code> for bold.</div>
+    <div>Use <code className="text-white bg-black/20 px-1 rounded">_text_</code> for italic.</div>
+    <div>Use <code className="text-white bg-black/20 px-1 rounded">~text~</code> for underline.</div>
+  </div>
+);
