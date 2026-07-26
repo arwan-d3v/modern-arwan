@@ -110,47 +110,60 @@ export default function Navbar() {
         </div>
       </div>
 
+      {/* Mobile menu overlay */}
+      {menuOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 z-[105] md:hidden" 
+          onClick={() => setMenuOpen(false)} 
+        />
+      )}
+
       {/* Mobile menu panel */}
       {menuOpen && (
         <motion.div
-          initial={{ x: '-100%' }}
+          initial={{ x: '100%' }}
           animate={{ x: 0 }}
-          exit={{ x: '-100%' }}
-          transition={{ type: 'spring', stiffness: 300 }}
-          className="fixed inset-0 bg-black/80 backdrop-blur-md flex flex-col p-6 z-50 md:hidden"
+          exit={{ x: '100%' }}
+          transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+          className="fixed top-0 right-0 bottom-0 w-[280px] bg-background border-l border-white/10 flex flex-col p-6 z-[110] md:hidden shadow-2xl overflow-y-auto"
         >
-          <button className="self-end mb-4" onClick={() => setMenuOpen(false)} aria-label="Close menu">
-            <X size={24} className="text-white" />
-          </button>
-          <div className="flex flex-col gap-4">
-            <NavLink href="/about" label="ABOUT" active={pathname === '/about'} />
-            <NavLink href="/#experience" label="EXPERIENCE" active={pathname === '/#experience'} />
-            <NavLink href="/#showcase" label="PROJECTS" active={pathname === '/#showcase'} />
-            <NavLink href="/testimonials" label="TESTIMONIALS" active={pathname === '/testimonials'} />
-            <NavLink href="/blog" label="LOGS" active={pathname === '/blog'} />
-            <NavLink href="/contact" label="CONTACT" active={pathname === '/contact'} />
+          <div className="flex items-center justify-between mb-8">
+            <span className="font-mono font-bold tracking-tighter text-accent-cyan uppercase text-sm">
+              MENU
+            </span>
+            <button className="p-2 -mr-2 text-text-secondary hover:text-white transition-colors" onClick={() => setMenuOpen(false)} aria-label="Close menu">
+              <X size={24} />
+            </button>
+          </div>
+          <div className="flex flex-col gap-6">
+            <NavLink href="/about" label="ABOUT" active={pathname === '/about'} onClick={() => setMenuOpen(false)} />
+            <NavLink href="/#experience" label="EXPERIENCE" active={pathname === '/#experience'} onClick={() => setMenuOpen(false)} />
+            <NavLink href="/#showcase" label="PROJECTS" active={pathname === '/#showcase'} onClick={() => setMenuOpen(false)} />
+            <NavLink href="/testimonials" label="TESTIMONIALS" active={pathname === '/testimonials'} onClick={() => setMenuOpen(false)} />
+            <NavLink href="/blog" label="LOGS" active={pathname === '/blog'} onClick={() => setMenuOpen(false)} />
+            <NavLink href="/contact" label="CONTACT" active={pathname === '/contact'} onClick={() => setMenuOpen(false)} />
           </div>
           {/* Replicate right side links for mobile */}
-          <div className="mt-8 pt-8 border-t border-white/10 flex flex-col gap-4">
+          <div className="mt-8 pt-8 border-t border-white/10 flex flex-col gap-6">
             {profile ? (
-              <Link href="/profile" className="text-text-secondary hover:text-accent-cyan">
+              <Link href="/profile" onClick={() => setMenuOpen(false)} className="text-sm font-mono text-text-secondary hover:text-accent-cyan">
                 Profile
               </Link>
             ) : (
-              <Link href="/login" className="text-text-secondary hover:text-accent-cyan">
+              <Link href="/login" onClick={() => setMenuOpen(false)} className="text-sm font-mono text-text-secondary hover:text-accent-cyan">
                 Login
               </Link>
             )}
-            <Link href="/dashboard" className="text-text-secondary hover:text-accent-cyan">
+            <Link href="/dashboard" onClick={() => setMenuOpen(false)} className="text-sm font-mono text-text-secondary hover:text-accent-cyan">
               Dashboard
             </Link>
             {isSuperUser && (
-              <Link href="/dashboard/users" className="text-text-secondary hover:text-accent-purple">
+              <Link href="/dashboard/users" onClick={() => setMenuOpen(false)} className="text-sm font-mono text-text-secondary hover:text-accent-purple">
                 Users
               </Link>
             )}
             {isSuperUser && (
-              <Link href="/dashboard/cms" className="text-text-secondary hover:text-accent-purple">
+              <Link href="/dashboard/cms" onClick={() => setMenuOpen(false)} className="text-sm font-mono text-text-secondary hover:text-accent-purple">
                 CMS
               </Link>
             )}
@@ -161,10 +174,11 @@ export default function Navbar() {
   );
 }
 
-function NavLink({ href, label, active }: { href: string, label: string, active: boolean }) {
+function NavLink({ href, label, active, onClick }: { href: string, label: string, active: boolean, onClick?: () => void }) {
   return (
     <Link
       href={href}
+      onClick={onClick}
       className={`font-mono text-[10px] font-bold tracking-widest transition-all hover:text-accent-cyan relative group ${active ? 'text-accent-cyan' : 'text-text-secondary'}`}
     >
       {label}
