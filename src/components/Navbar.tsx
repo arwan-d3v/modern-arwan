@@ -3,7 +3,7 @@ import React from 'react';
 
 import Link from "next/link";
 import { Terminal, Lock, ChevronDown, User, Menu, X } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
 import { usePathname } from "next/navigation";
 import DarkModeToggle from "@/components/DarkModeToggle";
@@ -15,7 +15,8 @@ export default function Navbar() {
   const isSuperUser = profile?.role === 'super_admin' || !process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-[100] h-16 glass border-b border-white/5 flex items-center px-6 md:px-12 justify-between">
+    <>
+      <nav className="fixed top-0 left-0 right-0 z-[100] h-16 glass border-b border-white/5 flex items-center px-6 md:px-12 justify-between">
       {/* Left: Hamburger & Branding */}
       <div className="flex items-center gap-3">
         {/* Mobile menu button */}
@@ -113,67 +114,72 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile menu overlay */}
-      {menuOpen && (
-        <div 
-          className="fixed inset-0 bg-black/60 z-[105] md:hidden" 
-          onClick={() => setMenuOpen(false)} 
-        />
-      )}
-
-      {/* Mobile menu panel */}
-      {menuOpen && (
-        <motion.div
-          initial={{ x: '-100%' }}
-          animate={{ x: 0 }}
-          exit={{ x: '-100%' }}
-          transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-          className="fixed top-0 left-0 bottom-0 w-[280px] bg-background border-r border-white/10 flex flex-col p-6 z-[110] md:hidden shadow-2xl overflow-y-auto"
-        >
-          <div className="flex items-center justify-between mb-8">
-            <span className="font-mono font-bold tracking-tighter text-accent-cyan uppercase text-sm">
-              MENU
-            </span>
-            <button className="p-2 -mr-2 text-text-secondary hover:text-white transition-colors" onClick={() => setMenuOpen(false)} aria-label="Close menu">
-              <X size={24} />
-            </button>
-          </div>
-          <div className="flex flex-col gap-6">
-            <NavLink href="/about" label="ABOUT" active={pathname === '/about'} onClick={() => setMenuOpen(false)} />
-            <NavLink href="/#experience" label="EXPERIENCE" active={pathname === '/#experience'} onClick={() => setMenuOpen(false)} />
-            <NavLink href="/#showcase" label="PROJECTS" active={pathname === '/#showcase'} onClick={() => setMenuOpen(false)} />
-            <NavLink href="/testimonials" label="TESTIMONIALS" active={pathname === '/testimonials'} onClick={() => setMenuOpen(false)} />
-            <NavLink href="/blog" label="LOGS" active={pathname === '/blog'} onClick={() => setMenuOpen(false)} />
-            <NavLink href="/contact" label="CONTACT" active={pathname === '/contact'} onClick={() => setMenuOpen(false)} />
-          </div>
-          {/* Replicate right side links for mobile */}
-          <div className="mt-8 pt-8 border-t border-white/10 flex flex-col gap-6">
-            {profile ? (
-              <Link href="/profile" onClick={() => setMenuOpen(false)} className="text-sm font-mono text-text-secondary hover:text-accent-cyan">
-                Profile
-              </Link>
-            ) : (
-              <Link href="/login" onClick={() => setMenuOpen(false)} className="text-sm font-mono text-text-secondary hover:text-accent-cyan">
-                Login
-              </Link>
-            )}
-            <Link href="/dashboard" onClick={() => setMenuOpen(false)} className="text-sm font-mono text-text-secondary hover:text-accent-cyan">
-              Dashboard
-            </Link>
-            {isSuperUser && (
-              <Link href="/dashboard/users" onClick={() => setMenuOpen(false)} className="text-sm font-mono text-text-secondary hover:text-accent-purple">
-                Users
-              </Link>
-            )}
-            {isSuperUser && (
-              <Link href="/dashboard/cms" onClick={() => setMenuOpen(false)} className="text-sm font-mono text-text-secondary hover:text-accent-purple">
-                CMS
-              </Link>
-            )}
-          </div>
-        </motion.div>
-      )}
+      {/* Mobile menu overlay and panel are rendered outside nav to escape backdrop-filter containing block */}
     </nav>
+
+    <AnimatePresence>
+      {menuOpen && (
+        <>
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 z-[105] md:hidden" 
+            onClick={() => setMenuOpen(false)} 
+          />
+          <motion.div
+            initial={{ x: '-100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '-100%' }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className="fixed top-0 left-0 bottom-0 w-[280px] bg-background border-r border-white/10 flex flex-col p-6 z-[110] md:hidden shadow-2xl overflow-y-auto"
+          >
+            <div className="flex items-center justify-between mb-8">
+              <span className="font-mono font-bold tracking-tighter text-accent-cyan uppercase text-sm">
+                MENU
+              </span>
+              <button className="p-2 -mr-2 text-text-secondary hover:text-white transition-colors" onClick={() => setMenuOpen(false)} aria-label="Close menu">
+                <X size={24} />
+              </button>
+            </div>
+            <div className="flex flex-col gap-6">
+              <NavLink href="/about" label="ABOUT" active={pathname === '/about'} onClick={() => setMenuOpen(false)} />
+              <NavLink href="/#experience" label="EXPERIENCE" active={pathname === '/#experience'} onClick={() => setMenuOpen(false)} />
+              <NavLink href="/#showcase" label="PROJECTS" active={pathname === '/#showcase'} onClick={() => setMenuOpen(false)} />
+              <NavLink href="/testimonials" label="TESTIMONIALS" active={pathname === '/testimonials'} onClick={() => setMenuOpen(false)} />
+              <NavLink href="/blog" label="LOGS" active={pathname === '/blog'} onClick={() => setMenuOpen(false)} />
+              <NavLink href="/contact" label="CONTACT" active={pathname === '/contact'} onClick={() => setMenuOpen(false)} />
+            </div>
+            {/* Replicate right side links for mobile */}
+            <div className="mt-8 pt-8 border-t border-white/10 flex flex-col gap-6">
+              {profile ? (
+                <Link href="/profile" onClick={() => setMenuOpen(false)} className="text-sm font-mono text-text-secondary hover:text-accent-cyan">
+                  Profile
+                </Link>
+              ) : (
+                <Link href="/login" onClick={() => setMenuOpen(false)} className="text-sm font-mono text-text-secondary hover:text-accent-cyan">
+                  Login
+                </Link>
+              )}
+              <Link href="/dashboard" onClick={() => setMenuOpen(false)} className="text-sm font-mono text-text-secondary hover:text-accent-cyan">
+                Dashboard
+              </Link>
+              {isSuperUser && (
+                <Link href="/dashboard/users" onClick={() => setMenuOpen(false)} className="text-sm font-mono text-text-secondary hover:text-accent-purple">
+                  Users
+                </Link>
+              )}
+              {isSuperUser && (
+                <Link href="/dashboard/cms" onClick={() => setMenuOpen(false)} className="text-sm font-mono text-text-secondary hover:text-accent-purple">
+                  CMS
+                </Link>
+              )}
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+    </>
   );
 }
 
