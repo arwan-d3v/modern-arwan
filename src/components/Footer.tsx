@@ -40,7 +40,7 @@ export default function Footer() {
             <Link href="/" className="inline-block">
               <h2 className="text-xl font-bold tracking-widest uppercase text-white flex items-center gap-2">
                 <span className="w-2 h-2 bg-accent-cyan rounded-full animate-pulse" />
-                SYS_ARCHITECT
+                IS_ARWAN.DEV
               </h2>
             </Link>
             <p className="text-sm leading-relaxed max-w-sm">
@@ -108,7 +108,7 @@ export default function Footer() {
         <div className="mt-16 pt-8 border-t border-surface flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono">
           <div className="flex items-center gap-1.5 text-text-secondary">
             <span>&copy; {currentYear}</span>
-            <span className="text-white font-bold tracking-wider">SYS_ARCHITECT</span>
+            <span className="text-white font-bold tracking-wider">IS_ARWAN.DEV</span>
             <span>All rights reserved.</span>
           </div>
           

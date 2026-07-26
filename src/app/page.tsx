@@ -31,11 +31,11 @@ export default function Home() {
         <FadeIn>
           <div className="flex items-center gap-2 mb-6">
              <div className="w-2 h-2 rounded-full bg-accent-cyan animate-pulse" />
-             <span className="font-mono text-[10px] font-bold text-accent-cyan tracking-[0.3em] uppercase">SYSTEM_ARCHITECT_ACTIVE</span>
+             <span className="font-mono text-[10px] font-bold text-accent-cyan tracking-[0.3em] uppercase">IS_ARWAN_DEV_ACTIVE</span>
           </div>
           <h1 className="text-5xl md:text-8xl font-bold tracking-tighter mb-8 bg-gradient-to-b from-text-primary to-text-secondary bg-clip-text text-transparent">
-            System Architecture & <br />
-            <span className="text-accent-cyan">Infrastructure</span>
+            Free CMS For Your CV & <br />
+            <span className="text-accent-cyan">Portfolio Projects</span>
           </h1>
         </FadeIn>
 
@@ -82,7 +82,7 @@ export default function Home() {
       <footer className="pt-20 pb-10 border-t border-surface flex flex-col md:flex-row justify-between items-center gap-8">
         <div className="flex items-center gap-2">
           <Terminal className="text-accent-cyan" size={20} />
-          <span className="font-mono font-bold tracking-tighter text-sm uppercase">SYS_ARCHITECT // 2024</span>
+          <span className="font-mono font-bold tracking-tighter text-sm uppercase">IS_ARWAN.DEV // 2024</span>
         </div>
         <div className="flex gap-12">
           {["GITHUB", "LINKEDIN", "TWITTER"].map(link => (

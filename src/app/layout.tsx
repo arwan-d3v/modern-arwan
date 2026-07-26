@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import { AuthProvider } from "@/context/AuthContext";
 
 export const metadata: Metadata = {
-  title: "SYS_ARCHITECT | Command Center",
+  title: "Is Arwan DEV",
   description: "Personal Portfolio & System Command Center",
   icons: {
     icon: "/images/web icon/igris.png",

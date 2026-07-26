@@ -20,7 +20,7 @@ export default function Navbar() {
           <Terminal className="text-accent-cyan" size={18} />
         </div>
         <span className="font-mono font-bold tracking-tighter text-text-primary uppercase text-sm">
-          SYS_ARCHITECT
+          IS_ARWAN.DEV
         </span>
       </Link>
 
