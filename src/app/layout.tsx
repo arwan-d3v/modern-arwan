@@ -1,22 +1,15 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import { AuthProvider } from "@/context/AuthContext";
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-jetbrains-mono",
-});
 
 export const metadata: Metadata = {
   title: "SYS_ARCHITECT | Command Center",
   description: "Personal Portfolio & System Command Center",
+  icons: {
+    icon: "/images/web icon/igris.png",
+  }
 };
 
 export default function RootLayout({
@@ -26,12 +19,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans bg-background text-text-primary antialiased`}>
+      <body className={`font-sans bg-background text-text-primary antialiased flex flex-col min-h-screen`}>
         <AuthProvider>
           <Navbar />
-          <main className="min-h-screen pt-16">
+          <main className="flex-1 pt-16">
             {children}
           </main>
+          <Footer />
         </AuthProvider>
       </body>
     </html>

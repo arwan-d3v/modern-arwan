@@ -66,6 +66,12 @@ export interface CVData {
     summary: string;
     photoUrl?: string;
     photoShape?: 'circle' | 'square';
+    dateOfBirth?: string;
+    gender?: string;
+    maritalStatus?: string;
+    religion?: string;
+    nationality?: string;
+    website?: string;
   };
   experience: {
     title: string;
@@ -83,5 +89,27 @@ export interface CVData {
   skills: {
     name: string;
     level: number; // 1-100
+  }[];
+  projects: {
+    title: string;
+    description: string;
+    link?: string;
+    techStack?: string;
+  }[];
+  certifications: {
+    name: string;
+    issuer: string;
+    year: string;
+    link?: string;
+  }[];
+  languages: {
+    name: string;
+    proficiency: string;
+  }[];
+  references: {
+    name: string;
+    position: string;
+    company: string;
+    contact: string;
   }[];
 }
