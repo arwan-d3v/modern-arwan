@@ -4,42 +4,68 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import StatusOverlay from "@/components/ui/StatusOverlay";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
+  const [showChildren, setShowChildren] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    // Development Fallback: If no API key is defined, bypass authentication
+    // Dev bypass
     if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY) {
       console.warn("Auth bypass active (missing API Key)");
-      setLoading(false);
+      setTimeout(() => {
+        setLoading(false);
+        setShowChildren(true);
+      }, 800); // brief cinematic delay even in dev
       return;
     }
 
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUser(user);
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        setUser(firebaseUser);
+        // Slight delay for smooth transition feel
+        setTimeout(() => {
+          setLoading(false);
+          setTimeout(() => setShowChildren(true), 100);
+        }, 400);
       } else {
-        router.push("/login");
+        setTimeout(() => {
+          setLoading(false);
+          router.push("/login");
+        }, 600);
       }
-      setLoading(false);
     });
 
     return () => unsubscribe();
   }, [router]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-accent-cyan/20 border-t-accent-cyan rounded-full animate-spin" />
-          <p className="font-mono text-accent-cyan text-sm animate-pulse">AUTHORIZING...</p>
-        </div>
-      </div>
-    );
-  }
+  return (
+    <>
+      {/* Full-screen loading overlay */}
+      <StatusOverlay
+        mode="loading"
+        visible={loading}
+        title="VERIFYING_ACCESS"
+        message="Authenticating your session credentials."
+        subtext="SECURE_NODE // TLS_1.3"
+      />
 
-  return <>{children}</>;
+      {/* Children with fade-in transition */}
+      <AnimatePresence>
+        {showChildren && (
+          <motion.div
+            initial={{ opacity: 0, filter: "blur(4px)" }}
+            animate={{ opacity: 1, filter: "blur(0px)" }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
+          >
+            {children}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
 }

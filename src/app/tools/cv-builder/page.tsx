@@ -18,12 +18,16 @@ import {
   Mail,
   Phone,
   MapPin,
-  Globe
+  Globe,
+  Menu,
 } from "lucide-react";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { CVData } from "@/types";
 import FadeIn from "@/components/FadeIn";
 import PhotoUpload from "@/components/PhotoUpload";
+import Modal from "@/components/ui/Modal";
+import { useToast } from "@/context/ToastContext";
+
 interface CVHistoryItem {
   id: string;
   date: string;
@@ -176,26 +180,30 @@ const DEFAULT_DATA_INDONESIAN: CVData = {
   ],
 };
 
+const SECTIONS = [
+  { id: 1, label: "01_Personal_Identity" },
+  { id: 2, label: "02_Experience_Nodes" },
+  { id: 3, label: "03_Academic_Protocol" },
+  { id: 4, label: "04_Technical_Matrix" },
+  { id: 5, label: "05_PROJECTS_PORTFOLIO" },
+  { id: 6, label: "06_CERTIFICATIONS" },
+  { id: 7, label: "07_LANGUAGES_&_REFERENCES" },
+];
+
 export default function CVBuilderPage() {
   const [step, setStep] = useState(1);
   const [template, setTemplate] = useState<'ATS' | 'MODERN' | 'INDONESIAN'>('MODERN');
-  const [isMobile, setIsMobile] = useState(false);
   const [history, setHistory] = useState<CVHistoryItem[]>([]);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [itemToLoad, setItemToLoad] = useState<CVHistoryItem | null>(null);
+  
+  const toast = useToast();
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 1024);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-
     const saved = localStorage.getItem('cv_history');
     if (saved) {
       try { setHistory(JSON.parse(saved)); } catch (e) {}
     }
-
-    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   const { register, control, watch, handleSubmit, reset, setValue } = useForm<CVData>({
@@ -257,31 +265,20 @@ export default function CVBuilderPage() {
     setHistory(updatedHistory);
     localStorage.setItem('cv_history', JSON.stringify(updatedHistory));
     
-    window.print();
+    toast.success("INITIATING_PRINT_SEQUENCE", "Your CV is ready for processing.");
+    setTimeout(() => {
+      window.print();
+    }, 500);
   };
 
-  if (isMobile) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center p-6 text-center">
-        <FadeIn className="max-w-md space-y-6">
-          <MonitorOff size={64} className="mx-auto text-accent-cyan opacity-20" />
-          <h1 className="text-2xl font-bold tracking-tighter uppercase">MOBILE_INTERFACE_LOCKED</h1>
-          <p className="text-text-secondary font-mono text-sm leading-relaxed">
-            The <span className="text-accent-cyan font-bold">CV_CONSTRUCTOR</span> requires a high-resolution canvas for real-time rendering.
-            Please access this module via a Desktop terminal (width {">"} 1024px).
-          </p>
-          <div className="flex flex-col gap-4 pt-4">
-             <div className="flex items-center gap-2 text-[10px] font-mono text-accent-purple justify-center">
-                <AlertCircle size={14} /> SYSTEM_PRE-REQUISITE: RESOLUTION_1080P
-             </div>
-             <a href="/" className="glass px-6 py-3 font-mono text-xs font-bold uppercase tracking-widest hover:text-accent-cyan">
-                RETURN_TO_BASE
-             </a>
-          </div>
-        </FadeIn>
-      </div>
-    );
-  }
+  const handleLoadHistory = () => {
+    if (itemToLoad) {
+      reset(itemToLoad.data);
+      setIsHistoryOpen(false);
+      setItemToLoad(null);
+      toast.success("ARCHIVE_RESTORED", `Successfully loaded: ${itemToLoad.title}`);
+    }
+  };
 
   return (
     <ProtectedRoute>
@@ -301,25 +298,46 @@ export default function CVBuilderPage() {
                    <History size={14} /> PROJECT_VAULT
                 </button>
               </div>
-              <div className="flex gap-4">
-                <button
-                  onClick={() => handleTemplateChange('ATS')}
-                  className={`flex-1 py-3 px-4 font-mono text-[10px] font-bold uppercase border transition-all ${template === 'ATS' ? 'bg-white text-black border-white' : 'bg-surface border-surface text-text-secondary hover:border-white/20'}`}
-                >
-                  ATS_OPTIMIZED
-                </button>
-                <button
-                  onClick={() => handleTemplateChange('MODERN')}
-                  className={`flex-1 py-3 px-4 font-mono text-[10px] font-bold uppercase border transition-all ${template === 'MODERN' ? 'bg-accent-cyan text-black border-accent-cyan' : 'bg-surface border-surface text-text-secondary hover:border-accent-cyan/20'}`}
-                >
-                  MODERN_MINIMAL
-                </button>
-                <button
-                  onClick={() => handleTemplateChange('INDONESIAN')}
-                  className={`flex-1 py-3 px-4 font-mono text-[10px] font-bold uppercase border transition-all ${template === 'INDONESIAN' ? 'bg-accent-purple text-black border-accent-purple' : 'bg-surface border-surface text-text-secondary hover:border-accent-purple/20'}`}
-                >
-                  INDONESIAN_VERSION
-                </button>
+              <div className="flex flex-col md:flex-row gap-4">
+                <div className="flex flex-1 gap-2">
+                  <button
+                    onClick={() => handleTemplateChange('ATS')}
+                    className={`flex-1 py-3 px-2 md:px-4 font-mono text-[9px] md:text-[10px] font-bold uppercase border transition-all ${template === 'ATS' ? 'bg-white text-black border-white' : 'bg-surface border-surface text-text-secondary hover:border-white/20'}`}
+                  >
+                    ATS_OPT
+                  </button>
+                  <button
+                    onClick={() => handleTemplateChange('MODERN')}
+                    className={`flex-1 py-3 px-2 md:px-4 font-mono text-[9px] md:text-[10px] font-bold uppercase border transition-all ${template === 'MODERN' ? 'bg-accent-cyan text-black border-accent-cyan' : 'bg-surface border-surface text-text-secondary hover:border-accent-cyan/20'}`}
+                  >
+                    MODERN
+                  </button>
+                  <button
+                    onClick={() => handleTemplateChange('INDONESIAN')}
+                    className={`flex-1 py-3 px-2 md:px-4 font-mono text-[9px] md:text-[10px] font-bold uppercase border transition-all ${template === 'INDONESIAN' ? 'bg-accent-purple text-black border-accent-purple' : 'bg-surface border-surface text-text-secondary hover:border-accent-purple/20'}`}
+                  >
+                    INDO
+                  </button>
+                </div>
+                
+                {/* Section Navigation Dropdown */}
+                <div className="relative md:w-64 shrink-0 group">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-accent-cyan pointer-events-none">
+                    <Menu size={16} />
+                  </div>
+                  <select 
+                    value={step}
+                    onChange={(e) => setStep(Number(e.target.value))}
+                    className="w-full bg-surface border border-surface text-text-primary text-xs font-mono font-bold uppercase py-3 pl-10 pr-10 appearance-none outline-none focus:border-accent-cyan/50 hover:border-white/10 transition-colors cursor-pointer"
+                  >
+                    {SECTIONS.map(s => (
+                      <option key={s.id} value={s.id}>{s.label}</option>
+                    ))}
+                  </select>
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 text-text-secondary pointer-events-none">
+                    ▼
+                  </div>
+                </div>
               </div>
             </header>
 
@@ -550,8 +568,8 @@ export default function CVBuilderPage() {
         </div>
 
         {/* Right Column: Preview */}
-        <div className="bg-[#111111] p-12 flex justify-center overflow-y-auto custom-scrollbar print:p-0 print:bg-white print:block">
-          <div className="w-[210mm] min-h-[297mm] bg-white shadow-2xl origin-top transition-transform duration-500 print:shadow-none print:m-0 print:w-full print:scale-100">
+        <div className="bg-[#111111] p-4 md:p-12 flex justify-center overflow-auto custom-scrollbar print:p-0 print:bg-white print:block">
+          <div className="w-[210mm] min-h-[297mm] bg-white shadow-2xl origin-top transition-transform duration-500 print:shadow-none print:m-0 print:w-full print:scale-100 shrink-0 scale-[0.45] sm:scale-75 md:scale-100 lg:scale-[0.85] xl:scale-100 lg:-translate-y-4 xl:translate-y-0 -mb-[150mm] sm:-mb-[80mm] md:mb-0">
             <div className="h-full text-black bg-white">
               {template === 'ATS' ? (
                 <ATSPreview data={watchedData} />
@@ -597,12 +615,7 @@ export default function CVBuilderPage() {
                          <Trash2 size={16} />
                        </button>
                        <button 
-                         onClick={() => {
-                           if(window.confirm("Loading this archive will overwrite your current progress. Continue?")) {
-                              reset(item.data);
-                              setIsHistoryOpen(false);
-                           }
-                         }}
+                         onClick={() => setItemToLoad(item)}
                          className="px-4 py-1.5 font-mono text-[10px] font-bold uppercase bg-white/10 hover:bg-accent-cyan hover:text-black transition-colors"
                        >
                          LOAD
@@ -615,6 +628,18 @@ export default function CVBuilderPage() {
           </FadeIn>
         </div>
       )}
+
+      {/* Confirmation Modal */}
+      <Modal 
+        visible={!!itemToLoad}
+        title="OVERWRITE_WARNING"
+        message={`Loading "${itemToLoad?.title}" will overwrite your current progress. Do you wish to continue?`}
+        confirmLabel="LOAD_ARCHIVE"
+        cancelLabel="CANCEL"
+        dangerous={true}
+        onConfirm={handleLoadHistory}
+        onCancel={() => setItemToLoad(null)}
+      />
 
       <style jsx global>{`
         /* Web-safe ATS Typography & Print Enhancements */

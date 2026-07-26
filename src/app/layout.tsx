@@ -3,6 +3,8 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { AuthProvider } from "@/context/AuthContext";
+import { ToastProvider } from "@/context/ToastContext";
+import PageTransition from "@/components/PageTransition";
 import { ThemeProvider } from "next-themes";
 
 export const metadata: Metadata = {
@@ -50,11 +52,15 @@ export default function RootLayout({
       <body className={`font-sans bg-background text-text-primary antialiased flex flex-col min-h-screen`}>
         <ThemeProvider attribute="class" defaultTheme="dark">
           <AuthProvider>
-            <Navbar />
-            <main className="flex-1 pt-16">
-              {children}
-            </main>
-            <Footer />
+            <ToastProvider>
+              <Navbar />
+              <main className="flex-1 pt-16">
+                <PageTransition>
+                  {children}
+                </PageTransition>
+              </main>
+              <Footer />
+            </ToastProvider>
           </AuthProvider>
         </ThemeProvider>
       </body>
