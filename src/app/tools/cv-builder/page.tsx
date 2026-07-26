@@ -568,7 +568,7 @@ export default function CVBuilderPage() {
         </div>
 
         {/* Right Column: Preview */}
-        <div className="bg-[#111111] p-4 md:p-12 flex justify-center overflow-auto custom-scrollbar print:p-0 print:bg-white print:block">
+        <div className="bg-surface p-4 md:p-12 flex justify-center overflow-auto custom-scrollbar print:p-0 print:bg-white print:block">
           <div className="w-[210mm] min-h-[297mm] bg-white shadow-2xl origin-top transition-transform duration-500 print:shadow-none print:m-0 print:w-full print:scale-100 shrink-0 scale-[0.45] sm:scale-75 md:scale-100 lg:scale-[0.85] xl:scale-100 lg:-translate-y-4 xl:translate-y-0 -mb-[150mm] sm:-mb-[80mm] md:mb-0">
             <div className="h-full text-black bg-white">
               {template === 'ATS' ? (
@@ -585,20 +585,20 @@ export default function CVBuilderPage() {
 
       {/* History Modal */}
       {isHistoryOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm print:hidden">
-          <FadeIn className="bg-[#111111] border border-surface w-full max-w-2xl max-h-[80vh] flex flex-col">
-            <div className="p-4 border-b border-surface flex justify-between items-center bg-black/50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm print:hidden">
+          <FadeIn className="bg-surface border border-surface w-full max-w-2xl max-h-[80vh] flex flex-col">
+            <div className="p-4 border-b border-surface flex justify-between items-center bg-background/50">
                <div className="font-mono text-xs font-bold uppercase tracking-widest text-accent-cyan flex items-center gap-2">
                  <History size={14} /> PROJECT_VAULT_ARCHIVES
                </div>
-               <button onClick={() => setIsHistoryOpen(false)} className="text-text-secondary hover:text-white"><X size={16} /></button>
+               <button onClick={() => setIsHistoryOpen(false)} className="text-text-secondary hover:text-text-primary"><X size={16} /></button>
             </div>
             <div className="p-4 overflow-y-auto space-y-3 custom-scrollbar flex-1">
                {history.length === 0 ? (
                  <div className="text-center p-8 text-text-secondary font-mono text-xs uppercase">No archives found in local storage.</div>
                ) : (
                  history.map(item => (
-                   <div key={item.id} className="flex justify-between items-center p-4 bg-white/5 border border-surface hover:border-accent-cyan/30 transition-colors group">
+                   <div key={item.id} className="flex justify-between items-center p-4 dark:bg-white/5 bg-black/5 border border-surface hover:border-accent-cyan/30 transition-colors group">
                      <div>
                        <div className="font-bold text-sm">{item.title}</div>
                        <div className="text-[10px] font-mono text-text-secondary mt-1">{item.date}</div>
@@ -616,7 +616,7 @@ export default function CVBuilderPage() {
                        </button>
                        <button 
                          onClick={() => setItemToLoad(item)}
-                         className="px-4 py-1.5 font-mono text-[10px] font-bold uppercase bg-white/10 hover:bg-accent-cyan hover:text-black transition-colors"
+                         className="px-4 py-1.5 font-mono text-[10px] font-bold uppercase dark:bg-white/10 bg-black/10 hover:bg-accent-cyan hover:text-white dark:hover:text-black transition-colors"
                        >
                          LOAD
                        </button>

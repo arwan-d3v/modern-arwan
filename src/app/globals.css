@@ -13,7 +13,7 @@
 
 @layer base {
   body {
-    @apply bg-background text-text-primary antialiased selection:bg-accent-cyan/30;
+    @apply bg-background text-text-primary antialiased selection:bg-accent-cyan selection:text-white;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -23,14 +23,16 @@
 
 @layer utilities {
   .glass {
-    @apply bg-surface/50 backdrop-blur-md border border-surface;
+    @apply backdrop-blur-md border border-surface;
+    background-color: var(--color-overlay, rgba(14, 14, 16, 0.72));
   }
 
   .glass-hover {
     @apply transition-all duration-300;
   }
   .glass-hover:hover {
-    @apply bg-surface/70 border-accent-cyan/30;
+    @apply border-accent-cyan;
+    background-color: var(--color-surface);
     box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
   }
 
@@ -38,7 +40,8 @@
     @apply transition-all duration-300;
   }
   .glass-purple-hover:hover {
-    @apply bg-surface/70 border-accent-purple/30;
+    @apply border-accent-purple;
+    background-color: var(--color-surface);
     box-shadow: 0 0 15px rgba(138, 43, 226, 0.2);
   }
 }

@@ -6,19 +6,20 @@ const config: Config = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
-        background: "#0A0A0A",
-        surface: "#161618",
+        background: "var(--color-background)",
+        surface: "var(--color-surface)",
         accent: {
-          cyan: "#00F2FF",
-          purple: "#8A2BE2",
+          cyan: "var(--color-accent-cyan)",
+          purple: "var(--color-accent-purple)",
           deepCyan: "#0E7490", // For CV Builder print
         },
         text: {
-          primary: "#EDEDED",
-          secondary: "#A0A0A0",
+          primary: "var(--color-text-primary)",
+          secondary: "var(--color-text-secondary)",
         },
       },
       fontFamily: {

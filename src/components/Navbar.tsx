@@ -16,7 +16,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-[100] h-16 glass border-b border-white/5 flex items-center px-6 md:px-12 justify-between">
+      <nav className="fixed top-0 left-0 right-0 z-[100] h-16 glass border-b border-surface flex items-center px-6 md:px-12 justify-between">
       {/* Left: Hamburger & Branding */}
       <div className="flex items-center gap-3">
         {/* Mobile menu button */}
@@ -47,7 +47,7 @@ export default function Navbar() {
       {/* Right: Status & Dashboard */}
       <div className="flex items-center gap-4">
         <DarkModeToggle />
-        <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-black/40 border border-white/5">
+        <div className="hidden sm:flex items-center gap-2 px-3 py-1 dark:bg-black/40 bg-white/40 border border-surface">
           <motion.div
             animate={{ opacity: [0.3, 1, 0.3] }}
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
@@ -55,49 +55,49 @@ export default function Navbar() {
           />
           <span className="text-[9px] font-mono text-accent-cyan font-bold tracking-[0.2em] uppercase">SYS_ONLINE</span>
         </div>
-        <div className="h-4 w-px bg-white/10 hidden sm:block" />
+        <div className="h-4 w-px bg-surface hidden sm:block" />
         <div className="flex items-center gap-2 md:gap-4">
           <div className="relative group hidden sm:block">
             <button className="font-mono text-[10px] font-bold tracking-widest text-text-secondary hover:text-accent-cyan uppercase transition-colors flex items-center gap-1">
               Console
               <ChevronDown size={14} className="group-hover:rotate-180 transition-transform duration-300" />
             </button>
-            <div className="absolute right-0 mt-6 w-48 py-2 bg-black/90 backdrop-blur-md border border-white/10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 flex flex-col z-50">
-              <Link href="/dashboard" className="px-4 py-2 text-xs font-mono text-text-secondary hover:text-accent-cyan hover:bg-white/5 transition-colors">
+            <div className="absolute right-0 mt-6 w-48 py-2 bg-background/90 backdrop-blur-md border border-surface opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 flex flex-col z-50">
+              <Link href="/dashboard" className="px-4 py-2 text-xs font-mono text-text-secondary hover:text-accent-cyan dark:hover:bg-white/5 hover:bg-black/5 transition-colors">
                 Dashboard
               </Link>
               {isSuperUser && (
-                <Link href="/dashboard/users" className="px-4 py-2 text-xs font-mono text-text-secondary hover:text-accent-purple hover:bg-white/5 transition-colors">
+                <Link href="/dashboard/users" className="px-4 py-2 text-xs font-mono text-text-secondary hover:text-accent-purple dark:hover:bg-white/5 hover:bg-black/5 transition-colors">
                   Users
                 </Link>
               )}
               {isSuperUser && (
-                <Link href="/dashboard/cms" className="px-4 py-2 text-xs font-mono text-text-secondary hover:text-accent-purple hover:bg-white/5 transition-colors">
+                <Link href="/dashboard/cms" className="px-4 py-2 text-xs font-mono text-text-secondary hover:text-accent-purple dark:hover:bg-white/5 hover:bg-black/5 transition-colors">
                   CMS
                 </Link>
               )}
             </div>
           </div>
-          <div className="h-4 w-px bg-white/10 hidden sm:block" />
+          <div className="h-4 w-px bg-surface hidden sm:block" />
           {profile ? (
             <div className="relative group">
               <button className="flex items-center gap-2 focus:outline-none">
                 {profile.photoURL ? (
-                  <img src={profile.photoURL} alt="Profile" className="w-8 h-8 rounded-full border border-white/10 group-hover:border-accent-cyan transition-colors object-cover" />
+                  <img src={profile.photoURL} alt="Profile" className="w-8 h-8 rounded-full border border-surface group-hover:border-accent-cyan transition-colors object-cover" />
                 ) : (
-                  <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center border border-white/10 group-hover:border-accent-cyan transition-colors">
+                  <div className="w-8 h-8 rounded-full dark:bg-white/10 bg-black/5 flex items-center justify-center border border-surface group-hover:border-accent-cyan transition-colors">
                     <User size={16} className="text-text-secondary group-hover:text-accent-cyan transition-colors" />
                   </div>
                 )}
               </button>
-              <div className="absolute right-0 mt-2 w-48 py-2 bg-black/90 backdrop-blur-md border border-white/10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 flex flex-col z-50">
-                <div className="px-4 py-2 border-b border-white/5 mb-1 text-xs text-text-secondary truncate">
+              <div className="absolute right-0 mt-2 w-48 py-2 bg-background/90 backdrop-blur-md border border-surface opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 flex flex-col z-50">
+                <div className="px-4 py-2 border-b border-surface mb-1 text-xs text-text-secondary truncate">
                   {profile.email}
                 </div>
-                <Link href="/profile" className="px-4 py-2 text-xs font-mono text-text-secondary hover:text-accent-cyan hover:bg-white/5 transition-colors">
+                <Link href="/profile" className="px-4 py-2 text-xs font-mono text-text-secondary hover:text-accent-cyan dark:hover:bg-white/5 hover:bg-black/5 transition-colors">
                   My Profile
                 </Link>
-                <button onClick={() => logout()} className="w-full text-left px-4 py-2 text-xs font-mono text-text-secondary hover:text-red-400 hover:bg-white/5 transition-colors">
+                <button onClick={() => logout()} className="w-full text-left px-4 py-2 text-xs font-mono text-text-secondary hover:text-red-400 dark:hover:bg-white/5 hover:bg-black/5 transition-colors">
                   Logout
                 </button>
               </div>
@@ -105,7 +105,7 @@ export default function Navbar() {
           ) : (
             <Link
               href="/login"
-              className={`p-2 hover:bg-white/5 transition-colors group ${pathname === '/login' ? 'text-accent-cyan' : 'text-text-secondary'}`}
+              className={`p-2 dark:hover:bg-white/5 hover:bg-black/5 transition-colors group ${pathname === '/login' ? 'text-accent-cyan' : 'text-text-secondary'}`}
               title="SECURE_ACCESS"
             >
               <Lock size={18} className="group-hover:scale-110 transition-transform" />
@@ -124,7 +124,7 @@ export default function Navbar() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 z-[105] md:hidden" 
+            className="fixed inset-0 bg-background/60 z-[105] md:hidden" 
             onClick={() => setMenuOpen(false)} 
           />
           <motion.div
@@ -132,13 +132,13 @@ export default function Navbar() {
             animate={{ x: 0 }}
             exit={{ x: '-100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed top-0 left-0 bottom-0 w-[280px] bg-background border-r border-white/10 flex flex-col p-6 z-[110] md:hidden shadow-2xl overflow-y-auto"
+            className="fixed top-0 left-0 bottom-0 w-[280px] bg-background border-r border-surface flex flex-col p-6 z-[110] md:hidden shadow-2xl overflow-y-auto"
           >
             <div className="flex items-center justify-between mb-8">
               <span className="font-mono font-bold tracking-tighter text-accent-cyan uppercase text-sm">
                 MENU
               </span>
-              <button className="p-2 -mr-2 text-text-secondary hover:text-white transition-colors" onClick={() => setMenuOpen(false)} aria-label="Close menu">
+              <button className="p-2 -mr-2 text-text-secondary hover:text-text-primary transition-colors" onClick={() => setMenuOpen(false)} aria-label="Close menu">
                 <X size={24} />
               </button>
             </div>
@@ -151,7 +151,7 @@ export default function Navbar() {
               <NavLink href="/contact" label="CONTACT" active={pathname === '/contact'} onClick={() => setMenuOpen(false)} />
             </div>
             {/* Replicate right side links for mobile */}
-            <div className="mt-8 pt-8 border-t border-white/10 flex flex-col gap-6">
+            <div className="mt-8 pt-8 border-t border-surface flex flex-col gap-6">
               {profile ? (
                 <Link href="/profile" onClick={() => setMenuOpen(false)} className="text-sm font-mono text-text-secondary hover:text-accent-cyan">
                   Profile

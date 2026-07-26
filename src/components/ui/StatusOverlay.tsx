@@ -102,7 +102,7 @@ function LiquidGlassBackdrop({ color, bg }: { color: string; bg: string }) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         style={{
-          background: "rgba(6,6,8,0.75)",
+          background: "var(--color-overlay)",
           backdropFilter: "blur(32px) saturate(200%)",
           WebkitBackdropFilter: "blur(32px) saturate(200%)",
         }}
@@ -236,7 +236,7 @@ function GlassCard({
       transition={{ type: "spring", stiffness: 300, damping: 28, delay: 0.1 }}
       className="relative w-full max-w-md mx-4 overflow-hidden"
       style={{
-        background: "rgba(14,14,16,0.72)",
+        background: "var(--color-surface)",
         backdropFilter: "blur(40px) saturate(200%)",
         WebkitBackdropFilter: "blur(40px) saturate(200%)",
         border: `1px solid ${ringGlow}`,
@@ -326,7 +326,7 @@ export default function StatusOverlay({
               {(onCancel && mode !== "loading") && (
                 <button
                   onClick={onCancel}
-                  className="absolute top-4 right-4 text-white/30 hover:text-white/70 transition-colors"
+                  className="absolute top-4 right-4 text-text-secondary hover:text-text-primary transition-colors"
                 >
                   <X size={18} />
                 </button>
@@ -372,7 +372,7 @@ export default function StatusOverlay({
                   )}
                 </motion.h2>
                 <motion.p
-                  className="text-sm text-white/55 leading-relaxed font-sans max-w-xs"
+                  className="text-sm text-text-secondary leading-relaxed font-sans max-w-xs"
                   initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
@@ -381,7 +381,7 @@ export default function StatusOverlay({
                 </motion.p>
                 {subtext && (
                   <motion.p
-                    className="text-xs font-mono text-white/30 tracking-widest uppercase mt-2"
+                    className="text-xs font-mono text-text-secondary opacity-70 tracking-widest uppercase mt-2"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.6 }}
@@ -403,17 +403,17 @@ export default function StatusOverlay({
                     onClick={onCancel}
                     className="flex-1 py-2.5 px-4 text-xs font-mono font-bold uppercase tracking-widest transition-all rounded-xl"
                     style={{
-                      background: "rgba(255,255,255,0.06)",
-                      border: "1px solid rgba(255,255,255,0.1)",
-                      color: "rgba(255,255,255,0.5)",
+                      background: "transparent",
+                      border: "1px solid var(--color-border)",
+                      color: "var(--color-text-secondary)",
                     }}
                     onMouseEnter={e => {
-                      e.currentTarget.style.background = "rgba(255,255,255,0.1)";
-                      e.currentTarget.style.color = "rgba(255,255,255,0.8)";
+                      e.currentTarget.style.background = "var(--color-border)";
+                      e.currentTarget.style.color = "var(--color-text-primary)";
                     }}
                     onMouseLeave={e => {
-                      e.currentTarget.style.background = "rgba(255,255,255,0.06)";
-                      e.currentTarget.style.color = "rgba(255,255,255,0.5)";
+                      e.currentTarget.style.background = "transparent";
+                      e.currentTarget.style.color = "var(--color-text-secondary)";
                     }}
                   >
                     {cancelLabel}
@@ -464,7 +464,7 @@ export default function StatusOverlay({
               {(mode === "error" || mode === "fail") && onCancel && !onRetry && (
                 <motion.button
                   onClick={onCancel}
-                  className="text-xs font-mono uppercase tracking-widest text-white/40 hover:text-white/70 transition-colors"
+                  className="text-xs font-mono uppercase tracking-widest text-text-secondary hover:text-text-primary transition-colors"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.6 }}

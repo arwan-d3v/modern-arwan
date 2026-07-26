@@ -1,21 +1,26 @@
 /* design-tokens.css */
 :root {
-  /* Light theme */
-  --color-background: #0a0a0a;
-  --color-surface: #161618;
-  --color-accent-cyan: #00f2ff;
-  --color-accent-purple: #8a2be2;
-  --color-text-primary: #ededed;
-  --color-text-secondary: #a0a0a0;
+  /* Light theme (default/fallback before js loads, or if forced to light) */
+  --color-background: #F8FAFC;
+  --color-surface: #FFFFFF;
+  --color-accent-cyan: #0891B2;
+  --color-accent-purple: #7C3AED;
+  --color-text-primary: #0F172A;
+  --color-text-secondary: #64748B;
+  --color-overlay: rgba(255, 255, 255, 0.7);
+  --color-border: rgba(0, 0, 0, 0.1);
 }
-html.dark {
+
+.dark {
   /* Dark theme overrides */
-  --color-background: #0a0a0a; /* keep same or adjust */
+  --color-background: #0A0A0A;
   --color-surface: #161618;
-  --color-accent-cyan: #00f2ff;
-  --color-accent-purple: #8a2be2;
-  --color-text-primary: #ededed;
-  --color-text-secondary: #a0a0a0;
+  --color-accent-cyan: #00F2FF;
+  --color-accent-purple: #8A2BE2;
+  --color-text-primary: #EDEDED;
+  --color-text-secondary: #A0A0A0;
+  --color-overlay: rgba(10, 10, 10, 0.8);
+  --color-border: rgba(255, 255, 255, 0.1);
 }
 
 /* Utility classes using the tokens */

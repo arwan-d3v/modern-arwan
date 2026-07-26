@@ -41,7 +41,7 @@ export default function Modal({
           <motion.div
             className="absolute inset-0 cursor-pointer"
             style={{
-              background: "rgba(4,4,6,0.7)",
+              background: "var(--color-overlay)",
               backdropFilter: "blur(20px) saturate(180%)",
               WebkitBackdropFilter: "blur(20px) saturate(180%)",
             }}
@@ -60,7 +60,7 @@ export default function Modal({
           <motion.div
             className="relative w-full max-w-sm overflow-hidden"
             style={{
-              background: "rgba(12,12,14,0.85)",
+              background: "var(--color-surface)",
               backdropFilter: "blur(48px) saturate(200%)",
               WebkitBackdropFilter: "blur(48px) saturate(200%)",
               border: `1px solid ${accentColor}30`,
@@ -111,14 +111,14 @@ export default function Modal({
                 </div>
                 <button
                   onClick={onCancel}
-                  className="text-white/25 hover:text-white/60 transition-colors shrink-0 ml-2"
+                  className="text-text-secondary hover:text-text-primary transition-colors shrink-0 ml-2"
                 >
                   <X size={16} />
                 </button>
               </div>
 
               {/* Message */}
-              <p className="text-sm text-white/55 leading-relaxed mb-6 font-sans">
+              <p className="text-sm text-text-secondary leading-relaxed mb-6 font-sans">
                 {message}
               </p>
 
@@ -128,17 +128,17 @@ export default function Modal({
                   onClick={onCancel}
                   className="flex-1 py-2.5 px-4 text-xs font-mono font-bold uppercase tracking-widest rounded-xl transition-all duration-200"
                   style={{
-                    background: "rgba(255,255,255,0.05)",
-                    border: "1px solid rgba(255,255,255,0.08)",
-                    color: "rgba(255,255,255,0.45)",
+                    background: "transparent",
+                    border: "1px solid var(--color-border)",
+                    color: "var(--color-text-secondary)",
                   }}
                   onMouseEnter={e => {
-                    e.currentTarget.style.background = "rgba(255,255,255,0.1)";
-                    e.currentTarget.style.color = "rgba(255,255,255,0.75)";
+                    e.currentTarget.style.background = "var(--color-border)";
+                    e.currentTarget.style.color = "var(--color-text-primary)";
                   }}
                   onMouseLeave={e => {
-                    e.currentTarget.style.background = "rgba(255,255,255,0.05)";
-                    e.currentTarget.style.color = "rgba(255,255,255,0.45)";
+                    e.currentTarget.style.background = "transparent";
+                    e.currentTarget.style.color = "var(--color-text-secondary)";
                   }}
                 >
                   {cancelLabel}

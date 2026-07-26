@@ -50,7 +50,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`font-sans bg-background text-text-primary antialiased flex flex-col min-h-screen`}>
-        <ThemeProvider attribute="class" defaultTheme="dark">
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
           <AuthProvider>
             <ToastProvider>
               <Navbar />
