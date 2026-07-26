@@ -74,7 +74,7 @@ export default function LoginPage() {
                   <input
                     type="email"
                     placeholder="EMAIL_ADDRESS"
-                    className="w-full bg-black/40 border border-surface rounded-xl py-3 pl-12 pr-4 outline-none focus:border-accent-cyan/50 transition-colors font-mono text-sm disabled:opacity-50"
+                    className="w-full dark:bg-black/40 bg-white/60 border border-surface rounded-xl py-3 pl-12 pr-4 outline-none focus:border-accent-cyan/50 transition-colors font-mono text-sm disabled:opacity-50 text-text-primary placeholder:text-text-secondary"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -91,7 +91,7 @@ export default function LoginPage() {
                   <input
                     type="password"
                     placeholder="ACCESS_KEY"
-                    className="w-full bg-black/40 border border-surface rounded-xl py-3 pl-12 pr-4 outline-none focus:border-accent-cyan/50 transition-colors font-mono text-sm disabled:opacity-50"
+                    className="w-full dark:bg-black/40 bg-white/60 border border-surface rounded-xl py-3 pl-12 pr-4 outline-none focus:border-accent-cyan/50 transition-colors font-mono text-sm disabled:opacity-50 text-text-primary placeholder:text-text-secondary"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -112,7 +112,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={authState.isBusy || authState.isSuccess}
-                className="w-full relative overflow-hidden bg-accent-cyan hover:bg-accent-cyan/90 text-black font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-all transform active:scale-[0.98] disabled:active:scale-100 disabled:opacity-70 disabled:cursor-not-allowed group/btn"
+                className="w-full relative overflow-hidden bg-accent-cyan hover:bg-accent-cyan/90 dark:text-black text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-all transform active:scale-[0.98] disabled:active:scale-100 disabled:opacity-70 disabled:cursor-not-allowed group/btn"
               >
                 {/* Button shine effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:animate-shimmer" />
@@ -148,11 +148,11 @@ export default function LoginPage() {
               <button
                 onClick={handleGoogleLogin}
                 disabled={authState.isBusy || authState.isSuccess}
-                className="glass hover:bg-white/5 py-3 rounded-xl flex items-center justify-center gap-2 transition-colors font-mono text-[10px] font-bold disabled:opacity-50 disabled:cursor-not-allowed border-accent-cyan/10 hover:border-accent-cyan/30"
+                className="glass dark:hover:bg-white/5 hover:bg-black/5 py-3 rounded-xl flex items-center justify-center gap-2 transition-colors font-mono text-[10px] font-bold disabled:opacity-50 disabled:cursor-not-allowed border-accent-cyan/10 hover:border-accent-cyan/30 text-text-primary"
               >
                 GOOGLE
               </button>
-              <button className="glass hover:bg-white/5 py-3 rounded-xl flex items-center justify-center gap-2 transition-colors font-mono text-[10px] font-bold opacity-50 cursor-not-allowed">
+              <button className="glass dark:hover:bg-white/5 hover:bg-black/5 py-3 rounded-xl flex items-center justify-center gap-2 transition-colors font-mono text-[10px] font-bold opacity-50 cursor-not-allowed text-text-primary">
                 GITHUB
               </button>
             </div>

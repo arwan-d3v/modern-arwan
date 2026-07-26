@@ -1,14 +1,14 @@
 /* design-tokens.css */
 :root {
   /* Light theme (default/fallback before js loads, or if forced to light) */
-  --color-background: #F8FAFC;
+  --color-background: #FDF6F0;
   --color-surface: #FFFFFF;
-  --color-accent-cyan: #0891B2;
-  --color-accent-purple: #7C3AED;
-  --color-text-primary: #0F172A;
-  --color-text-secondary: #64748B;
+  --color-accent-cyan: #7EC8E3;
+  --color-accent-purple: #F7A072;
+  --color-text-primary: #1A1C1E;
+  --color-text-secondary: #4A4C50;
   --color-overlay: rgba(255, 255, 255, 0.7);
-  --color-border: rgba(0, 0, 0, 0.1);
+  --color-border: rgba(0, 0, 0, 0.08);
 }
 
 .dark {

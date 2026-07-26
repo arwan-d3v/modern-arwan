@@ -38,7 +38,7 @@ export default function Footer() {
           {/* Brand & Value Proposition */}
           <div className="md:col-span-2 space-y-6">
             <Link href="/" className="inline-block">
-              <h2 className="text-xl font-bold tracking-widest uppercase text-white flex items-center gap-2">
+              <h2 className="text-xl font-bold tracking-widest uppercase text-text-primary flex items-center gap-2">
                 <span className="w-2 h-2 bg-accent-cyan rounded-full animate-pulse" />
                 IS_ARWAN.DEV
               </h2>
@@ -47,13 +47,13 @@ export default function Footer() {
               Empowering professionals with state-of-the-art tools. Elevate your career trajectory with our advanced CV Builder and portfolio solutions.
             </p>
             <div className="flex gap-4">
-              <a href="https://github.com/arwan" target="_blank" rel="noopener noreferrer" className="p-2 bg-white/5 rounded-md hover:bg-accent-cyan hover:text-black transition-colors">
+              <a href="https://github.com/arwan" target="_blank" rel="noopener noreferrer" className="p-2 dark:bg-white/5 bg-black/5 rounded-md hover:bg-accent-cyan dark:hover:text-black hover:text-white transition-colors">
                 <GithubIcon size={18} />
               </a>
-              <a href="https://linkedin.com/in/arwan" target="_blank" rel="noopener noreferrer" className="p-2 bg-white/5 rounded-md hover:bg-accent-cyan hover:text-black transition-colors">
+              <a href="https://linkedin.com/in/arwan" target="_blank" rel="noopener noreferrer" className="p-2 dark:bg-white/5 bg-black/5 rounded-md hover:bg-accent-cyan dark:hover:text-black hover:text-white transition-colors">
                 <LinkedinIcon size={18} />
               </a>
-              <a href="https://twitter.com/arwan" target="_blank" rel="noopener noreferrer" className="p-2 bg-white/5 rounded-md hover:bg-accent-cyan hover:text-black transition-colors">
+              <a href="https://twitter.com/arwan" target="_blank" rel="noopener noreferrer" className="p-2 dark:bg-white/5 bg-black/5 rounded-md hover:bg-accent-cyan dark:hover:text-black hover:text-white transition-colors">
                 <TwitterIcon size={18} />
               </a>
             </div>
@@ -61,7 +61,7 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div className="space-y-6">
-            <h3 className="text-sm font-bold uppercase tracking-widest text-white">Products</h3>
+            <h3 className="text-sm font-bold uppercase tracking-widest text-text-primary">Products</h3>
             <ul className="space-y-4 text-sm">
               <li>
                 <Link href="/tools/cv-builder" className="hover:text-accent-cyan transition-colors flex items-center gap-2">
@@ -83,7 +83,7 @@ export default function Footer() {
 
           {/* Legal & Monetization Readiness */}
           <div className="space-y-6">
-            <h3 className="text-sm font-bold uppercase tracking-widest text-white">Legal</h3>
+            <h3 className="text-sm font-bold uppercase tracking-widest text-text-primary">Legal</h3>
             <ul className="space-y-4 text-sm">
               <li>
                 <Link href="/privacy-policy" className="hover:text-accent-cyan transition-colors flex items-center gap-2">
@@ -108,7 +108,7 @@ export default function Footer() {
         <div className="mt-16 pt-8 border-t border-surface flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono">
           <div className="flex items-center gap-1.5 text-text-secondary">
             <span>&copy; {currentYear}</span>
-            <span className="text-white font-bold tracking-wider">IS_ARWAN.DEV</span>
+            <span className="text-text-primary font-bold tracking-wider">IS_ARWAN.DEV</span>
             <span>All rights reserved.</span>
           </div>
           
@@ -116,7 +116,7 @@ export default function Footer() {
             <span>Crafted with</span>
             <Heart size={12} className="text-accent-cyan animate-pulse" />
             <span>by</span>
-            <a href="https://arwan.dev" target="_blank" rel="noopener noreferrer" className="text-white hover:text-accent-cyan font-bold transition-colors underline decoration-accent-cyan/30 underline-offset-4">
+            <a href="https://arwan.dev" target="_blank" rel="noopener noreferrer" className="text-text-primary hover:text-accent-cyan font-bold transition-colors underline decoration-accent-cyan/30 underline-offset-4">
               Arwan
             </a>
           </div>
