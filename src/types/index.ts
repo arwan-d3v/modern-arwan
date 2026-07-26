@@ -65,6 +65,7 @@ export interface CVData {
     title: string;
     summary: string;
     photoUrl?: string;
+    photoShape?: 'circle' | 'square';
   };
   experience: {
     title: string;

@@ -19,7 +19,7 @@ import {
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { CVData } from "@/types";
 import FadeIn from "@/components/FadeIn";
-
+import PhotoUpload from "@/components/PhotoUpload";
 interface CVHistoryItem {
   id: string;
   date: string;
@@ -35,6 +35,7 @@ const DEFAULT_DATA: CVData = {
     location: "Singapore",
     title: "Senior Infrastructure Architect",
     summary: "Specialist in high-frequency trading infrastructure and automated data pipelines. Expert in low-latency systems and resilient cloud architecture.",
+    photoShape: 'circle',
   },
   experience: [
     {
@@ -82,7 +83,7 @@ export default function CVBuilderPage() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const { register, control, watch, handleSubmit, reset } = useForm<CVData>({
+  const { register, control, watch, handleSubmit, reset, setValue } = useForm<CVData>({
     defaultValues: DEFAULT_DATA,
   });
 
@@ -179,6 +180,12 @@ export default function CVBuilderPage() {
               {step === 1 && (
                 <div className="space-y-6">
                   <h2 className="text-lg font-bold font-mono tracking-widest text-accent-purple uppercase border-b border-surface pb-2">01_Personal_Identity</h2>
+                  <PhotoUpload 
+                    currentPhoto={watchedData.personalInfo.photoUrl}
+                    shape={watchedData.personalInfo.photoShape || 'circle'}
+                    onPhotoSelected={(url) => setValue('personalInfo.photoUrl', url)}
+                    onShapeChange={(shape) => setValue('personalInfo.photoShape', shape)}
+                  />
                   <FormInput label="Full Name" {...register("personalInfo.fullName")} />
                   <div className="grid grid-cols-2 gap-4">
                     <FormInput label="Email" {...register("personalInfo.email")} />
@@ -492,9 +499,15 @@ function ModernPreview({ data }: { data: CVData }) {
       {/* Sidebar */}
       <div className="w-[30%] bg-[#F3F4F6] p-8 flex flex-col gap-8">
         <div className="space-y-4">
-          <div className="w-24 h-24 bg-white rounded-full mx-auto border-4 border-white shadow-sm flex items-center justify-center text-gray-300">
-             <LayoutIcon size={40} />
-          </div>
+          {data.personalInfo.photoUrl ? (
+            <div className={`w-24 h-24 mx-auto border-4 border-white shadow-sm overflow-hidden ${data.personalInfo.photoShape === 'square' ? 'rounded-2xl' : 'rounded-full'}`}>
+              <img src={data.personalInfo.photoUrl} alt="Profile" className="w-full h-full object-cover" />
+            </div>
+          ) : (
+            <div className={`w-24 h-24 bg-white mx-auto border-4 border-white shadow-sm flex items-center justify-center text-gray-300 ${data.personalInfo.photoShape === 'square' ? 'rounded-2xl' : 'rounded-full'}`}>
+               <LayoutIcon size={40} />
+            </div>
+          )}
           <div className="text-center">
             <h1 className="text-xl font-bold leading-tight uppercase tracking-tighter">{data.personalInfo.fullName}</h1>
             <p className="text-[8pt] font-bold uppercase tracking-widest mt-1" style={{ color: accentColor }}>{data.personalInfo.title}</p>
