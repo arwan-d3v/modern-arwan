@@ -16,20 +16,22 @@ export default function Navbar() {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-[100] h-16 glass border-b border-white/5 flex items-center px-6 md:px-12 justify-between">
-      {/* Left: Branding */}
-      <Link href="/" className="flex items-center gap-2 group">
-        <div className="p-1.5 bg-accent-cyan/10 rounded-none border border-accent-cyan/20 group-hover:border-accent-cyan/50 transition-colors">
-          <Terminal className="text-accent-cyan" size={18} />
-        </div>
-        <span className="font-mono font-bold tracking-tighter text-text-primary uppercase text-sm">
-          IS_ARWAN.DEV
-        </span>
-      </Link>
-      <DarkModeToggle />
-      {/* Mobile menu button */}
-      <button className="md:hidden p-2" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu">
-        <Menu size={20} className="text-text-primary" />
-      </button>
+      {/* Left: Hamburger & Branding */}
+      <div className="flex items-center gap-3">
+        {/* Mobile menu button */}
+        <button className="md:hidden p-2 -ml-2" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu">
+          <Menu size={20} className="text-text-primary" />
+        </button>
+        
+        <Link href="/" className="flex items-center gap-2 group">
+          <div className="p-1.5 bg-accent-cyan/10 rounded-none border border-accent-cyan/20 group-hover:border-accent-cyan/50 transition-colors">
+            <Terminal className="text-accent-cyan" size={18} />
+          </div>
+          <span className="font-mono font-bold tracking-tighter text-text-primary uppercase text-sm">
+            IS_ARWAN.DEV
+          </span>
+        </Link>
+      </div>
 
       {/* Center: Links (desktop) */}
       <div className="hidden md:flex items-center gap-4 lg:gap-8">
@@ -43,6 +45,7 @@ export default function Navbar() {
 
       {/* Right: Status & Dashboard */}
       <div className="flex items-center gap-4">
+        <DarkModeToggle />
         <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-black/40 border border-white/5">
           <motion.div
             animate={{ opacity: [0.3, 1, 0.3] }}
@@ -52,8 +55,8 @@ export default function Navbar() {
           <span className="text-[9px] font-mono text-accent-cyan font-bold tracking-[0.2em] uppercase">SYS_ONLINE</span>
         </div>
         <div className="h-4 w-px bg-white/10 hidden sm:block" />
-        <div className="flex items-center gap-4">
-          <div className="relative group">
+        <div className="flex items-center gap-2 md:gap-4">
+          <div className="relative group hidden sm:block">
             <button className="font-mono text-[10px] font-bold tracking-widest text-text-secondary hover:text-accent-cyan uppercase transition-colors flex items-center gap-1">
               Console
               <ChevronDown size={14} className="group-hover:rotate-180 transition-transform duration-300" />
@@ -74,7 +77,7 @@ export default function Navbar() {
               )}
             </div>
           </div>
-          <div className="h-4 w-px bg-white/10" />
+          <div className="h-4 w-px bg-white/10 hidden sm:block" />
           {profile ? (
             <div className="relative group">
               <button className="flex items-center gap-2 focus:outline-none">
@@ -121,11 +124,11 @@ export default function Navbar() {
       {/* Mobile menu panel */}
       {menuOpen && (
         <motion.div
-          initial={{ x: '100%' }}
+          initial={{ x: '-100%' }}
           animate={{ x: 0 }}
-          exit={{ x: '100%' }}
+          exit={{ x: '-100%' }}
           transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-          className="fixed top-0 right-0 bottom-0 w-[280px] bg-background border-l border-white/10 flex flex-col p-6 z-[110] md:hidden shadow-2xl overflow-y-auto"
+          className="fixed top-0 left-0 bottom-0 w-[280px] bg-background border-r border-white/10 flex flex-col p-6 z-[110] md:hidden shadow-2xl overflow-y-auto"
         >
           <div className="flex items-center justify-between mb-8">
             <span className="font-mono font-bold tracking-tighter text-accent-cyan uppercase text-sm">

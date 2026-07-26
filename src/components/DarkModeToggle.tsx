@@ -1,11 +1,21 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { Switch } from "@headlessui/react"; // using headlessui for toggle (already dependency?)
 import { Moon, Sun } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function DarkModeToggle() {
+  const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return <div className="w-[18px] h-[18px]" />;
+  }
+
   const isDark = theme === "dark";
   return (
     <button
