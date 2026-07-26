@@ -39,6 +39,15 @@ const config: Config = {
       boxShadow: {
         'cyan-glow': '0 0 15px rgba(0, 242, 255, 0.3)',
         'purple-glow': '0 0 15px rgba(138, 43, 226, 0.3)',
+      },
+      keyframes: {
+        ripple: {
+          '0%': { transform: 'scale(0)', opacity: '0.5' },
+          '100%': { transform: 'scale(4)', opacity: '0' },
+        }
+      },
+      animation: {
+        ripple: 'ripple 0.5s linear',
       }
     },
   },

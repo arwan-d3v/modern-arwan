@@ -28,7 +28,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="w-full bg-[#050505] border-t border-surface text-text-secondary relative overflow-hidden print:hidden">
+    <footer className="w-full glass border-t border-surface text-text-secondary relative overflow-hidden print:hidden">
       {/* Decorative Top Glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-[1px] bg-gradient-to-r from-transparent via-accent-cyan to-transparent opacity-50" />
       

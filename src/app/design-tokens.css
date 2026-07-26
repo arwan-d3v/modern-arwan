@@ -1,0 +1,29 @@
+/* design-tokens.css */
+:root {
+  /* Light theme */
+  --color-background: #0a0a0a;
+  --color-surface: #161618;
+  --color-accent-cyan: #00f2ff;
+  --color-accent-purple: #8a2be2;
+  --color-text-primary: #ededed;
+  --color-text-secondary: #a0a0a0;
+}
+html.dark {
+  /* Dark theme overrides */
+  --color-background: #0a0a0a; /* keep same or adjust */
+  --color-surface: #161618;
+  --color-accent-cyan: #00f2ff;
+  --color-accent-purple: #8a2be2;
+  --color-text-primary: #ededed;
+  --color-text-secondary: #a0a0a0;
+}
+
+/* Utility classes using the tokens */
+.bg-background { background-color: var(--color-background); }
+.bg-surface { background-color: var(--color-surface); }
+.text-primary { color: var(--color-text-primary); }
+.text-secondary { color: var(--color-text-secondary); }
+.border-accent-cyan { border-color: var(--color-accent-cyan); }
+.border-accent-purple { border-color: var(--color-accent-purple); }
+.bg-accent-cyan { background-color: var(--color-accent-cyan); }
+.bg-accent-purple { background-color: var(--color-accent-purple); }

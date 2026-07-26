@@ -1,15 +1,17 @@
 "use client";
+import React from 'react';
 
 import Link from "next/link";
-import { Terminal, Lock, ChevronDown, User } from "lucide-react";
+import { Terminal, Lock, ChevronDown, User, Menu, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
 import { usePathname } from "next/navigation";
+import DarkModeToggle from "@/components/DarkModeToggle";
 
 export default function Navbar() {
   const { profile, logout } = useAuth();
   const pathname = usePathname();
-
+  const [menuOpen, setMenuOpen] = React.useState(false);
   const isSuperUser = profile?.role === 'super_admin' || !process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
 
   return (
@@ -23,11 +25,20 @@ export default function Navbar() {
           IS_ARWAN.DEV
         </span>
       </Link>
+      <DarkModeToggle />
+      {/* Mobile menu button */}
+      <button className="md:hidden p-2" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu">
+        <Menu size={20} className="text-text-primary" />
+      </button>
 
-      {/* Center: Links */}
-      <div className="hidden md:flex items-center gap-8">
-        <NavLink href="/#experience" label="EXPERIENCE_STREAMS" active={pathname === '/#experience'} />
-        <NavLink href="/#showcase" label="PROJECT_VAULT" active={pathname === '/#showcase'} />
+      {/* Center: Links (desktop) */}
+      <div className="hidden md:flex items-center gap-4 lg:gap-8">
+        <NavLink href="/about" label="ABOUT" active={pathname === '/about'} />
+        <NavLink href="/#experience" label="EXPERIENCE" active={pathname === '/#experience'} />
+        <NavLink href="/#showcase" label="PROJECTS" active={pathname === '/#showcase'} />
+        <NavLink href="/testimonials" label="TESTIMONIALS" active={pathname === '/testimonials'} />
+        <NavLink href="/blog" label="LOGS" active={pathname === '/blog'} />
+        <NavLink href="/contact" label="CONTACT" active={pathname === '/contact'} />
       </div>
 
       {/* Right: Status & Dashboard */}
@@ -40,9 +51,7 @@ export default function Navbar() {
           />
           <span className="text-[9px] font-mono text-accent-cyan font-bold tracking-[0.2em] uppercase">SYS_ONLINE</span>
         </div>
-
         <div className="h-4 w-px bg-white/10 hidden sm:block" />
-
         <div className="flex items-center gap-4">
           <div className="relative group">
             <button className="font-mono text-[10px] font-bold tracking-widest text-text-secondary hover:text-accent-cyan uppercase transition-colors flex items-center gap-1">
@@ -65,9 +74,7 @@ export default function Navbar() {
               )}
             </div>
           </div>
-
           <div className="h-4 w-px bg-white/10" />
-
           {profile ? (
             <div className="relative group">
               <button className="flex items-center gap-2 focus:outline-none">
@@ -102,6 +109,54 @@ export default function Navbar() {
           )}
         </div>
       </div>
+
+      {/* Mobile menu panel */}
+      {menuOpen && (
+        <motion.div
+          initial={{ x: '-100%' }}
+          animate={{ x: 0 }}
+          exit={{ x: '-100%' }}
+          transition={{ type: 'spring', stiffness: 300 }}
+          className="fixed inset-0 bg-black/80 backdrop-blur-md flex flex-col p-6 z-50 md:hidden"
+        >
+          <button className="self-end mb-4" onClick={() => setMenuOpen(false)} aria-label="Close menu">
+            <X size={24} className="text-white" />
+          </button>
+          <div className="flex flex-col gap-4">
+            <NavLink href="/about" label="ABOUT" active={pathname === '/about'} />
+            <NavLink href="/#experience" label="EXPERIENCE" active={pathname === '/#experience'} />
+            <NavLink href="/#showcase" label="PROJECTS" active={pathname === '/#showcase'} />
+            <NavLink href="/testimonials" label="TESTIMONIALS" active={pathname === '/testimonials'} />
+            <NavLink href="/blog" label="LOGS" active={pathname === '/blog'} />
+            <NavLink href="/contact" label="CONTACT" active={pathname === '/contact'} />
+          </div>
+          {/* Replicate right side links for mobile */}
+          <div className="mt-8 pt-8 border-t border-white/10 flex flex-col gap-4">
+            {profile ? (
+              <Link href="/profile" className="text-text-secondary hover:text-accent-cyan">
+                Profile
+              </Link>
+            ) : (
+              <Link href="/login" className="text-text-secondary hover:text-accent-cyan">
+                Login
+              </Link>
+            )}
+            <Link href="/dashboard" className="text-text-secondary hover:text-accent-cyan">
+              Dashboard
+            </Link>
+            {isSuperUser && (
+              <Link href="/dashboard/users" className="text-text-secondary hover:text-accent-purple">
+                Users
+              </Link>
+            )}
+            {isSuperUser && (
+              <Link href="/dashboard/cms" className="text-text-secondary hover:text-accent-purple">
+                CMS
+              </Link>
+            )}
+          </div>
+        </motion.div>
+      )}
     </nav>
   );
 }

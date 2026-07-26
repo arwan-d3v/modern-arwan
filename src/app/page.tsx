@@ -1,8 +1,10 @@
+import dynamic from "next/dynamic";
 import FadeIn from "@/components/FadeIn";
 import { Server, Zap, Shield, Terminal } from "lucide-react";
-import ExperienceSection from "@/components/ExperienceSection";
-import ShowcaseSection from "@/components/ShowcaseSection";
-import HeroSlider from "@/components/HeroSlider";
+
+const ExperienceSection = dynamic(() => import("@/components/ExperienceSection"), { ssr: true });
+const ShowcaseSection = dynamic(() => import("@/components/ShowcaseSection"), { ssr: true });
+const HeroSlider = dynamic(() => import("@/components/HeroSlider"), { ssr: false });
 
 interface StatCardProps {
   label: string;
@@ -12,7 +14,7 @@ interface StatCardProps {
 }
 
 const StatCard = ({ label, value, icon, delay = 0 }: StatCardProps) => (
-  <FadeIn delay={delay} className="glass p-6 rounded-none flex flex-col gap-4 border-accent-cyan/10">
+  <FadeIn delay={delay} className="glass glass-hover p-6 rounded-none flex flex-col gap-4 border-accent-cyan/10">
     <div className="text-accent-cyan">{icon}</div>
     <div>
       <div className="text-3xl font-mono font-bold text-text-primary tracking-tighter">{value}</div>
