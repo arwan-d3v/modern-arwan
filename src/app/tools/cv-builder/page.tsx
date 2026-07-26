@@ -813,7 +813,7 @@ function ModernPreview({ data }: { data: CVData }) {
           <div className="text-[8.5pt] space-y-3">
             <div className="space-y-0.5">
                <div className="font-bold text-[7pt] text-gray-400 uppercase">Email</div>
-               <div className="break-all">{data.personalInfo.email}</div>
+               <div className="break-words">{data.personalInfo.email}</div>
             </div>
             <div className="space-y-0.5">
                <div className="font-bold text-[7pt] text-gray-400 uppercase">Phone</div>
@@ -826,7 +826,7 @@ function ModernPreview({ data }: { data: CVData }) {
             {data.personalInfo.website && (
               <div className="space-y-0.5">
                  <div className="font-bold text-[7pt] text-gray-400 uppercase">WEBSITE / SOCIAL</div>
-                 <div className="break-all">{data.personalInfo.website}</div>
+                 <div className="break-words">{data.personalInfo.website}</div>
               </div>
             )}
           </div>
