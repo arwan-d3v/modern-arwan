@@ -1,10 +1,10 @@
 "use client";
 import Image from "next/image";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   collection,
-  getDocs,
+  onSnapshot,
   addDoc,
   deleteDoc,
   doc,
@@ -40,10 +40,10 @@ export default function CMSPage() {
   const [activeTab, setActiveTab] = useState<'EXPERIENCE' | 'PROJECTS' | 'SKILLS'>('EXPERIENCE');
   const [notification, setNotification] = useState<NotificationType | null>(null);
 
-  const showNotification = (type: 'success' | 'error' | 'info', message: string) => {
+  const showNotification = useCallback((type: 'success' | 'error' | 'info', message: string) => {
     setNotification({ type, message });
     setTimeout(() => setNotification(null), 5000);
-  };
+  }, []);
 
   return (
     <RoleGuard allowedRoles={['super_admin']}>
@@ -110,23 +110,25 @@ function ExperienceCMS({ showNotification }: CMSProps) {
     order: 0
   });
 
-  const fetchData = async () => {
-    setIsLoading(true);
-    setIsOrderDirty(false);
-    try {
-      if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY) return;
-      const q = query(collection(db, "work_experiences"), orderBy("order", "asc"));
-      const querySnapshot = await getDocs(q);
-      setItems(querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as WorkExperience)));
-    } catch (error) {
+  useEffect(() => {
+    if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY) {
+      setIsLoading(false);
+      return;
+    }
+    const q = query(collection(db, "work_experiences"), orderBy("order", "asc"));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as WorkExperience));
+      setItems(data);
+      setIsOrderDirty(false);
+      setIsLoading(false);
+    }, (error) => {
       console.error(error);
       showNotification('error', 'SYSTEM_FAILURE: Unable to fetch experience streams.');
-    } finally {
       setIsLoading(false);
-    }
-  };
+    });
 
-  useEffect(() => { fetchData(); }, []);
+    return () => unsubscribe();
+  }, [showNotification]);
 
   const handleAdd = async () => {
     if (!newItem.title || !newItem.company || !newItem.dates) {
@@ -141,7 +143,6 @@ function ExperienceCMS({ showNotification }: CMSProps) {
       setIsAdding(false);
       setNewItem({ type: 'formal', title: '', company: '', location: '', dates: '', description: '', order: 0 });
       showNotification('success', 'STREAM_COMMITTED: Experience added to database.');
-      fetchData();
     } catch (error) {
       console.error(error);
       showNotification('error', 'SYSTEM_FAILURE: Could not commit stream.');
@@ -168,7 +169,6 @@ function ExperienceCMS({ showNotification }: CMSProps) {
       setIsAdding(false);
       setBatchInput('');
       showNotification('success', 'BATCH_COMMITTED: Multiple streams injected.');
-      fetchData();
     } catch (error) {
       console.error(error);
       showNotification('error', 'VALIDATION_ERROR: Invalid JSON format.');
@@ -206,7 +206,6 @@ function ExperienceCMS({ showNotification }: CMSProps) {
       await deleteDoc(doc(db, "work_experiences", id));
       setDeleteConfirm(null);
       showNotification('success', 'STREAM_PURGED: Experience removed from database.');
-      fetchData();
     } catch (error) {
       console.error(error);
       showNotification('error', 'SYSTEM_FAILURE: Could not purge stream.');
@@ -356,23 +355,25 @@ function ProjectsCMS({ showNotification }: CMSProps) {
   const [techInput, setTechInput] = useState('');
   const [galleryInput, setGalleryInput] = useState('');
 
-  const fetchData = async () => {
-    setIsLoading(true);
-    setIsOrderDirty(false);
-    try {
-      if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY) return;
-      const q = query(collection(db, "showcase_projects"), orderBy("order", "asc"));
-      const querySnapshot = await getDocs(q);
-      setItems(querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ShowcaseProject)));
-    } catch (error) {
+  useEffect(() => {
+    if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY) {
+      setIsLoading(false);
+      return;
+    }
+    const q = query(collection(db, "showcase_projects"), orderBy("order", "asc"));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ShowcaseProject));
+      setItems(data);
+      setIsOrderDirty(false);
+      setIsLoading(false);
+    }, (error) => {
       console.error(error);
       showNotification('error', 'SYSTEM_FAILURE: Unable to access project vault.');
-    } finally {
       setIsLoading(false);
-    }
-  };
+    });
 
-  useEffect(() => { fetchData(); }, []);
+    return () => unsubscribe();
+  }, [showNotification]);
 
   const handleAdd = async () => {
     if (!newItem.title) {
@@ -388,7 +389,6 @@ function ProjectsCMS({ showNotification }: CMSProps) {
       setTechInput('');
       setGalleryInput('');
       showNotification('success', 'VAULT_UPDATED: Project successfully vaulted.');
-      fetchData();
     } catch (error) {
       console.error(error);
       showNotification('error', 'SYSTEM_FAILURE: Could not vault project.');
@@ -415,7 +415,6 @@ function ProjectsCMS({ showNotification }: CMSProps) {
       setIsAdding(false);
       setBatchInput('');
       showNotification('success', 'BATCH_COMMITTED: Multiple projects vaulted.');
-      fetchData();
     } catch (error) {
       console.error(error);
       showNotification('error', 'VALIDATION_ERROR: Invalid JSON format.');
@@ -453,7 +452,6 @@ function ProjectsCMS({ showNotification }: CMSProps) {
       await deleteDoc(doc(db, "showcase_projects", id));
       setDeleteConfirm(null);
       showNotification('success', 'PROJECT_PURGED: Project removed from vault.');
-      fetchData();
     } catch (error) {
       console.error(error);
       showNotification('error', 'SYSTEM_FAILURE: Could not purge project.');
@@ -624,23 +622,25 @@ function SkillsCMS({ showNotification }: CMSProps) {
   });
   const [skillInput, setSkillInput] = useState('');
 
-  const fetchData = async () => {
-    setIsLoading(true);
-    setIsOrderDirty(false);
-    try {
-      if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY) return;
-      const q = query(collection(db, "skills_matrix"), orderBy("order", "asc"));
-      const querySnapshot = await getDocs(q);
-      setItems(querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as SkillMatrix)));
-    } catch (error) {
+  useEffect(() => {
+    if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY) {
+      setIsLoading(false);
+      return;
+    }
+    const q = query(collection(db, "skills_matrix"), orderBy("order", "asc"));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as SkillMatrix));
+      setItems(data);
+      setIsOrderDirty(false);
+      setIsLoading(false);
+    }, (error) => {
       console.error(error);
       showNotification('error', 'SYSTEM_FAILURE: Unable to fetch technical matrix.');
-    } finally {
       setIsLoading(false);
-    }
-  };
+    });
 
-  useEffect(() => { fetchData(); }, []);
+    return () => unsubscribe();
+  }, [showNotification]);
 
   const handleAdd = async () => {
     if (!newItem.category) {
@@ -655,7 +655,6 @@ function SkillsCMS({ showNotification }: CMSProps) {
       setNewItem({ category: '', skills: [], order: 0 });
       setSkillInput('');
       showNotification('success', 'INTEGRATION_COMPLETE: Skill set added.');
-      fetchData();
     } catch (error) {
       console.error(error);
       showNotification('error', 'SYSTEM_FAILURE: Could not integrate skill set.');
@@ -682,7 +681,6 @@ function SkillsCMS({ showNotification }: CMSProps) {
       setIsAdding(false);
       setBatchInput('');
       showNotification('success', 'BATCH_COMMITTED: Multiple skill sets injected.');
-      fetchData();
     } catch (error) {
       console.error(error);
       showNotification('error', 'VALIDATION_ERROR: Invalid JSON format.');
@@ -720,7 +718,6 @@ function SkillsCMS({ showNotification }: CMSProps) {
       await deleteDoc(doc(db, "skills_matrix", id));
       setDeleteConfirm(null);
       showNotification('success', 'SKILL_PURGED: Skill set removed from matrix.');
-      fetchData();
     } catch (error) {
       console.error(error);
       showNotification('error', 'SYSTEM_FAILURE: Could not purge skill set.');
