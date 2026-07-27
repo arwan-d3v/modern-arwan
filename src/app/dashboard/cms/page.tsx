@@ -304,10 +304,10 @@ function ExperienceCMS({ showNotification }: CMSProps) {
                 <GripVertical size={16} className="text-text-secondary cursor-grab active:cursor-grabbing opacity-30 group-hover:opacity-100 transition-opacity" />
                 <div>
                   <div className="flex items-center gap-3">
-                     <span className="text-[10px] font-mono text-accent-cyan bg-accent-cyan/5 px-2 py-0.5 border border-accent-cyan/20 font-bold">{item.type.toUpperCase()}</span>
-                     <h3 className="font-bold text-text-primary">{item.title} {" // "} {item.company}</h3>
+                     <span className="text-[10px] font-mono text-accent-cyan bg-accent-cyan/5 px-2 py-0.5 border border-accent-cyan/20 font-bold">{(item.type || 'unknown').toUpperCase()}</span>
+                     <h3 className="font-bold text-text-primary">{item.title || 'UNTITLED'} {" // "} {item.company || 'NO_COMPANY'}</h3>
                   </div>
-                  <p className="text-[10px] text-text-secondary mt-1 font-mono uppercase tracking-tighter">{item.dates} | {item.location}</p>
+                  <p className="text-[10px] text-text-secondary mt-1 font-mono uppercase tracking-tighter">{item.dates || 'NO_DATE'} | {item.location || 'NO_LOCATION'}</p>
                 </div>
               </div>
               
@@ -574,9 +574,9 @@ function ProjectsCMS({ showNotification }: CMSProps) {
                     )}
                  </div>
                  <div>
-                    <h3 className="font-bold text-text-primary text-sm uppercase tracking-tight">{item.title}</h3>
+                    <h3 className="font-bold text-text-primary text-sm uppercase tracking-tight">{item.title || 'UNTITLED'}</h3>
                     <div className="flex flex-wrap gap-2 mt-2">
-                      {item.tech_stack.map(tag => (
+                      {(item.tech_stack || []).map(tag => (
                         <span key={tag} className="px-1.5 py-0.5 bg-accent-purple/10 text-accent-purple text-[8px] font-mono border border-accent-purple/20 uppercase font-bold tracking-tighter">{tag}</span>
                       ))}
                     </div>
@@ -810,9 +810,9 @@ function SkillsCMS({ showNotification }: CMSProps) {
               <div className="flex items-center gap-4">
                 <GripVertical size={16} className="text-text-secondary cursor-grab active:cursor-grabbing opacity-30 group-hover:opacity-100 transition-opacity shrink-0" />
                 <div>
-                  <h3 className="font-mono text-[10px] font-bold text-accent-cyan uppercase tracking-widest">{item.category}</h3>
+                  <h3 className="font-mono text-[10px] font-bold text-accent-cyan uppercase tracking-widest">{item.category || 'UNCATEGORIZED'}</h3>
                   <div className="mt-2 flex flex-wrap gap-2">
-                    {item.skills.map(skill => (
+                    {(item.skills || []).map(skill => (
                       <span key={skill} className="text-[10px] text-text-secondary font-mono bg-white/5 px-2 py-0.5 border border-white/5 uppercase font-bold tracking-tighter">{skill}</span>
                     ))}
                   </div>
