@@ -58,46 +58,7 @@ export default function ShowcaseSection() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {projects.map((project, index) => (
           <FadeIn key={project.id || index} delay={index * 0.1}>
-            <div
-              onClick={() => setSelectedProject(project)}
-              className="glass p-6 rounded-none group cursor-pointer glass-purple-hover flex flex-col h-full"
-            >
-              <div className="aspect-video w-full bg-black/40 overflow-hidden mb-6 border border-surface relative">
-                {project.image_url ? (
-                   <Image src={project.image_url} alt={project.title} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" width={600} height={400} unoptimized />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <Box size={48} className="text-surface" />
-                  </div>
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-60" />
-              </div>
-
-              <div className="space-y-4 flex-1 flex flex-col">
-                <div className="flex justify-between items-start">
-                  <h3 className="text-2xl font-bold tracking-tight text-text-primary uppercase group-hover:text-accent-purple transition-colors">
-                    {project.title}
-                  </h3>
-                  <div className="flex gap-3 text-text-secondary">
-                    <ExternalLink size={18} className="hover:text-white" />
-                  </div>
-                </div>
-
-                <p className="text-text-secondary text-sm leading-relaxed line-clamp-3">
-                  {project.description}
-                </p>
-
-                <div className="pt-4 mt-auto">
-                  <div className="flex flex-wrap gap-2">
-                    {project.tech_stack.map(tech => (
-                      <span key={tech} className="text-[10px] font-mono font-bold px-2 py-1 bg-surface border border-surface text-accent-purple uppercase tracking-tighter">
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
+            <ProjectCard project={project} onClick={() => setSelectedProject(project)} />
           </FadeIn>
         ))}
       </div>
@@ -110,5 +71,67 @@ export default function ShowcaseSection() {
         />
       )}
     </section>
+  );
+}
+
+function ProjectCard({ project, onClick }: { project: ShowcaseProject, onClick: () => void }) {
+  const [displayImage, setDisplayImage] = useState<string>('');
+
+  useEffect(() => {
+    // Combine main image and gallery urls
+    const allImages = [];
+    if (project.image_url) allImages.push(project.image_url);
+    if (project.gallery_urls && project.gallery_urls.length > 0) {
+      allImages.push(...project.gallery_urls);
+    }
+    
+    // Pick a random image on mount
+    if (allImages.length > 0) {
+      const randomIndex = Math.floor(Math.random() * allImages.length);
+      setDisplayImage(allImages[randomIndex]);
+    }
+  }, [project]);
+
+  return (
+    <div
+      onClick={onClick}
+      className="glass p-6 rounded-none group cursor-pointer glass-purple-hover flex flex-col h-full"
+    >
+      <div className="aspect-video w-full bg-black/40 overflow-hidden mb-6 border border-surface relative">
+        {displayImage ? (
+           <Image src={displayImage} alt={project.title} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" width={600} height={400} unoptimized />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <Box size={48} className="text-surface" />
+          </div>
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-60" />
+      </div>
+
+      <div className="space-y-4 flex-1 flex flex-col">
+        <div className="flex justify-between items-start">
+          <h3 className="text-2xl font-bold tracking-tight text-text-primary uppercase group-hover:text-accent-purple transition-colors">
+            {project.title}
+          </h3>
+          <div className="flex gap-3 text-text-secondary">
+            <ExternalLink size={18} className="hover:text-white" />
+          </div>
+        </div>
+
+        <p className="text-text-secondary text-sm leading-relaxed line-clamp-3">
+          {project.description}
+        </p>
+
+        <div className="pt-4 mt-auto">
+          <div className="flex flex-wrap gap-2">
+            {project.tech_stack.map(tech => (
+              <span key={tech} className="text-[10px] font-mono font-bold px-2 py-1 bg-surface border border-surface text-accent-purple uppercase tracking-tighter">
+                {tech}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

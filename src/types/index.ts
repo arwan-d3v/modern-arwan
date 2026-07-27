@@ -28,6 +28,7 @@ export interface ShowcaseProject {
   tech_stack: string[];
   description: string;
   image_url: string;
+  gallery_urls?: string[];
   live_link: string;
   github_link?: string;
   technical_brief?: {

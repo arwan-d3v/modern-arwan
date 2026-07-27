@@ -3,6 +3,7 @@ import FadeIn from "@/components/FadeIn";
 import { Server, Zap, Shield, Terminal } from "lucide-react";
 
 const ExperienceSection = dynamic(() => import("@/components/ExperienceSection"), { ssr: true });
+const SkillsSection = dynamic(() => import("@/components/SkillsSection"), { ssr: true });
 const ShowcaseSection = dynamic(() => import("@/components/ShowcaseSection"), { ssr: true });
 const HeroSlider = dynamic(() => import("@/components/HeroSlider"), { ssr: false });
 
@@ -76,6 +77,9 @@ export default function Home() {
 
       {/* Experience Section */}
       <ExperienceSection />
+
+      {/* Skills Section */}
+      <SkillsSection />
 
       {/* Showcase Section */}
       <ShowcaseSection />

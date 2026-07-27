@@ -5,6 +5,8 @@ import { ShowcaseProject } from "@/types";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ExternalLink, Terminal } from "lucide-react";
 
+import { useState } from "react";
+
 interface MediaModalProps {
   project: ShowcaseProject;
   isOpen: boolean;
@@ -12,6 +14,23 @@ interface MediaModalProps {
 }
 
 export default function MediaModal({ project, isOpen, onClose }: MediaModalProps) {
+  const [activeImage, setActiveImage] = useState<string>('');
+  
+  const allImages = project.image_url ? [project.image_url] : [];
+  if (project.gallery_urls && project.gallery_urls.length > 0) {
+    allImages.push(...project.gallery_urls);
+  }
+
+  // Set initial active image when modal opens
+  if (isOpen && !activeImage && allImages.length > 0) {
+    setActiveImage(allImages[0]);
+  }
+  
+  // Reset when closed
+  if (!isOpen && activeImage) {
+    setActiveImage('');
+  }
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -34,16 +53,33 @@ export default function MediaModal({ project, isOpen, onClose }: MediaModalProps
               className="w-full max-w-5xl bg-surface border border-white/10 rounded-none overflow-hidden pointer-events-auto flex flex-col md:flex-row max-h-[90vh]"
             >
               {/* Image/Media Side */}
-              <div className="md:w-3/5 bg-black flex items-center justify-center border-r border-white/5 relative overflow-hidden">
-                {project.image_url ? (
-                  <Image src={project.image_url} alt={project.title} className="w-full h-full object-cover" width={800} height={600} unoptimized />
-                ) : (
-                   <div className="flex flex-col items-center gap-4 opacity-20">
-                     <Terminal size={80} />
-                     <span className="font-mono text-xs">NO_PREVIEW_AVAILABLE</span>
-                   </div>
+              <div className="md:w-3/5 bg-black flex flex-col border-r border-white/5 relative overflow-hidden">
+                <div className="flex-1 flex items-center justify-center relative bg-black">
+                  {activeImage ? (
+                    <Image src={activeImage} alt={project.title} className="w-full h-full object-contain" width={800} height={600} unoptimized />
+                  ) : (
+                     <div className="flex flex-col items-center gap-4 opacity-20">
+                       <Terminal size={80} />
+                       <span className="font-mono text-xs">NO_PREVIEW_AVAILABLE</span>
+                     </div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+                </div>
+                
+                {/* Thumbnails */}
+                {allImages.length > 1 && (
+                  <div className="h-24 bg-black/50 border-t border-white/10 flex items-center gap-2 px-4 overflow-x-auto shrink-0 custom-scrollbar">
+                    {allImages.map((img, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setActiveImage(img)}
+                        className={`relative h-16 w-24 shrink-0 border-2 transition-all ${activeImage === img ? 'border-accent-cyan opacity-100 scale-105 z-10' : 'border-transparent opacity-50 hover:opacity-100 hover:border-white/20'}`}
+                      >
+                        <Image src={img} alt={`${project.title} gallery ${idx}`} className="w-full h-full object-cover" width={100} height={60} unoptimized />
+                      </button>
+                    ))}
+                  </div>
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
               </div>
 
               {/* Content Side */}
