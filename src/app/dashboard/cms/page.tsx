@@ -280,6 +280,19 @@ function ExperienceCMS({ showNotification }: CMSProps) {
             </>
           ) : (
             <>
+              <div className="bg-black/50 p-3 text-[10px] font-mono text-text-secondary border border-white/5 mb-4 rounded-sm">
+                <p className="text-accent-cyan font-bold mb-1 uppercase tracking-widest">EXPECTED JSON FORMAT:</p>
+                <pre className="opacity-70 whitespace-pre-wrap">{`[
+  {
+    "type": "formal" | "freelance",
+    "title": "Job Title",
+    "company": "Company Name",
+    "location": "City, Country",
+    "dates": "Jan 2024 - Present",
+    "description": "Description text..."
+  }
+]`}</pre>
+              </div>
               <FormTextarea label="JSON Payload (Array of Objects)" value={batchInput} onChange={setBatchInput} />
               <button 
                 onClick={handleBatchAdd} 
@@ -544,6 +557,21 @@ function ProjectsCMS({ showNotification }: CMSProps) {
             </>
           ) : (
             <>
+              <div className="bg-black/50 p-3 text-[10px] font-mono text-text-secondary border border-white/5 mb-4 rounded-sm">
+                <p className="text-accent-purple font-bold mb-1 uppercase tracking-widest">EXPECTED JSON FORMAT:</p>
+                <pre className="opacity-70 whitespace-pre-wrap">{`[
+  {
+    "title": "Project Title",
+    "tech_stack": ["React", "Node"],
+    "description": "Project details...",
+    "image_url": "https://...",
+    "live_link": "https://...",
+    "github_link": "https://...",
+    "gallery_urls": ["img1.png", "img2.png"],
+    "technical_brief": { "integrity": "VERIFIED", "encryption": "AES", "access": "RESTRICTED" }
+  }
+]`}</pre>
+              </div>
               <FormTextarea label="JSON Payload (Array of Objects)" value={batchInput} onChange={setBatchInput} />
               <button 
                 onClick={handleBatchAdd} 
@@ -787,6 +815,15 @@ function SkillsCMS({ showNotification }: CMSProps) {
             </>
           ) : (
             <>
+              <div className="bg-black/50 p-3 text-[10px] font-mono text-text-secondary border border-white/5 mb-4 rounded-sm">
+                <p className="text-accent-cyan font-bold mb-1 uppercase tracking-widest">EXPECTED JSON FORMAT:</p>
+                <pre className="opacity-70 whitespace-pre-wrap">{`[
+  {
+    "category": "FRAMEWORKS",
+    "skills": ["React", "Next.js", "Vue"]
+  }
+]`}</pre>
+              </div>
               <FormTextarea label="JSON Payload (Array of Objects)" value={batchInput} onChange={setBatchInput} />
               <button 
                 onClick={handleBatchAdd} 
