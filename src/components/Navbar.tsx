@@ -45,7 +45,7 @@ export default function Navbar() {
       </div>
 
       {/* Right: Status & Dashboard */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 sm:gap-4">
         <DarkModeToggle />
         <div className="hidden sm:flex items-center gap-2 px-3 py-1 dark:bg-black/40 bg-white/40 border border-surface">
           <motion.div

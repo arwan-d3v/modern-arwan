@@ -146,7 +146,7 @@ export default function CVBuilderPage() {
       return;
     }
 
-    const isPro = profile.role === 'super_admin' || profile.role === 'family';
+    const isPro = ['super_admin', 'family', 'pro'].includes(profile.role);
     let pdfExportCount = 0;
     
     if (!isPro) {
@@ -156,6 +156,13 @@ export default function CVBuilderPage() {
 
         if (userSnap.exists()) {
           pdfExportCount = userSnap.data().pdfExportCount || 0;
+          const lastExportDate = userSnap.data().lastPdfExportDate || 0;
+          const ONE_WEEK = 7 * 24 * 60 * 60 * 1000;
+
+          // Weekly quota reset
+          if (Date.now() - lastExportDate > ONE_WEEK) {
+            pdfExportCount = 0;
+          }
 
           if (pdfExportCount >= 2) {
             setIsPricingModalOpen(true);
@@ -247,7 +254,7 @@ export default function CVBuilderPage() {
       return;
     }
     
-    const isPro = profile.role === 'super_admin' || profile.role === 'family';
+    const isPro = ['super_admin', 'family', 'pro'].includes(profile.role);
     if (!isPro) {
       setIsPricingModalOpen(true);
       toast.error('PRO_FEATURE', 'Word export is available for Pro users only.');
@@ -352,18 +359,18 @@ ${exp.description}` })
         <div className="lg:h-screen w-full lg:w-1/2 overflow-y-auto p-4 md:p-8 lg:p-12 border-b lg:border-b-0 lg:border-r border-surface custom-scrollbar print:hidden relative z-10 bg-background">
           <div className="max-w-xl mx-auto space-y-12">
             <header className="space-y-4">
-              <div className="flex justify-between items-start">
+              <div className="flex flex-wrap justify-between items-start gap-4">
                 <div>
                   <div className="flex items-center gap-2 font-mono text-[10px] font-bold text-accent-cyan tracking-[0.2em] uppercase">
                     <FileText size={14} /> CV_CONSTRUCTOR_V2.1
                   </div>
-                  <h1 className="text-4xl font-bold tracking-tighter uppercase mt-2">Generate_Resume</h1>
+                  <h1 className="text-3xl sm:text-4xl font-bold tracking-tighter uppercase mt-2">Generate_Resume</h1>
                 </div>
                 <div className="flex gap-2">
-                  <button onClick={() => setIsATSOpen(true)} className="flex items-center gap-2 font-mono text-[10px] font-bold uppercase border border-accent-purple bg-accent-purple/10 text-accent-purple px-4 py-2 hover:bg-accent-purple hover:text-white transition-colors">
+                  <button onClick={() => setIsATSOpen(true)} className="flex items-center gap-2 font-mono text-[10px] font-bold uppercase border border-accent-purple bg-accent-purple/10 text-accent-purple px-3 sm:px-4 py-2 hover:bg-accent-purple hover:text-white transition-colors">
                      <AlertCircle size={14} /> ATS_SCAN
                   </button>
-                  <button onClick={() => setIsHistoryOpen(true)} className="flex items-center gap-2 font-mono text-[10px] font-bold uppercase border border-surface bg-surface text-text-secondary px-4 py-2 hover:border-accent-cyan/50 hover:text-accent-cyan transition-colors">
+                  <button onClick={() => setIsHistoryOpen(true)} className="flex items-center gap-2 font-mono text-[10px] font-bold uppercase border border-surface bg-surface text-text-secondary px-3 sm:px-4 py-2 hover:border-accent-cyan/50 hover:text-accent-cyan transition-colors">
                      <History size={14} /> PROJECT_VAULT
                   </button>
                 </div>
@@ -638,16 +645,16 @@ ${exp.description}` })
                     NEXT_MODULE <ChevronRight size={14} />
                   </button>
                 ) : (
-                  <div className="flex gap-2">
+                  <div className="flex flex-col sm:flex-row gap-2">
                   <button
                     onClick={handlePrint}
-                    className="flex items-center gap-2 font-mono text-[10px] font-bold uppercase bg-accent-cyan text-black px-6 py-2 hover:bg-accent-cyan/90"
+                    className="flex items-center justify-center gap-2 font-mono text-[10px] font-bold uppercase bg-accent-cyan text-black px-4 sm:px-6 py-2 hover:bg-accent-cyan/90"
                   >
                     <Printer size={14} /> EXPORT PDF
                   </button>
                   <button
                     onClick={handleExportWord}
-                    className="flex items-center gap-2 font-mono text-[10px] font-bold uppercase bg-accent-purple text-white px-6 py-2 hover:bg-accent-purple/90"
+                    className="flex items-center justify-center gap-2 font-mono text-[10px] font-bold uppercase bg-accent-purple text-white px-4 sm:px-6 py-2 hover:bg-accent-purple/90"
                   >
                     <FileText size={14} /> EXPORT DOCX (PRO)
                   </button>
@@ -660,7 +667,7 @@ ${exp.description}` })
 
         {/* Right/Bottom Column: Preview */}
         <div className="w-full lg:w-1/2 bg-surface p-4 md:p-12 flex justify-center overflow-auto custom-scrollbar print:p-0 print:bg-white print:block">
-          <div className="w-[210mm] min-h-[297mm] bg-white shadow-2xl origin-top transition-transform duration-500 print:shadow-none print:m-0 print:w-full print:scale-100 shrink-0 scale-[0.3] xs:scale-[0.4] sm:scale-[0.6] md:scale-75 lg:scale-[0.85] xl:scale-100 mx-auto -mb-[200mm] sm:-mb-[100mm] lg:mb-0 lg:-translate-y-4 xl:translate-y-0">
+          <div className="w-[210mm] min-h-[297mm] bg-white shadow-2xl origin-top transition-transform duration-500 print:shadow-none print:m-0 print:w-full print:scale-100 shrink-0 scale-[0.35] sm:scale-[0.6] md:scale-75 lg:scale-[0.85] xl:scale-100 mx-auto -mb-[180mm] sm:-mb-[100mm] lg:mb-0 lg:-translate-y-4 xl:translate-y-0">
             <div id="cv-export-container" className="h-full text-black bg-white relative">
               {/* Visual A4 Page Guides (Real-time Preview) - Hidden during print/export */}
               <div className="absolute inset-0 pointer-events-none z-50 print:hidden" style={{
@@ -748,29 +755,29 @@ ${exp.description}` })
                <button onClick={() => setIsPricingModalOpen(false)} className="text-text-secondary hover:text-white"><X size={24} /></button>
             </div>
 
-            <div className="p-8 overflow-y-auto custom-scrollbar flex-1">
+            <div className="p-4 sm:p-8 overflow-y-auto custom-scrollbar flex-1">
                <div className="text-center mb-8">
-                 <h2 className="text-2xl font-bold mb-2">Unlock the Full Potential of Your Career Arsenal</h2>
+                 <h2 className="text-xl sm:text-2xl font-bold mb-2">Unlock the Full Potential of Your Career Arsenal</h2>
                  <p className="text-text-secondary font-mono text-xs">Choose a tier that matches your deployment needs.</p>
                </div>
 
-               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                  {/* Free Tier */}
-                 <div className="p-6 border border-surface bg-background flex flex-col">
+                 <div className={`p-4 sm:p-6 border flex flex-col ${(!profile || profile.role === 'guest' || profile.role === 'public') ? 'border-accent-cyan/50 bg-accent-cyan/5' : 'border-surface bg-background'}`}>
                     <h3 className="text-xl font-bold mb-2">FREE</h3>
                     <div className="text-2xl font-bold text-accent-cyan mb-6">Rp 0</div>
                     <ul className="space-y-3 font-mono text-xs text-text-secondary mb-8 flex-1">
                       <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-accent-cyan rounded-full"></div> 2 PDF Exports / Week</li>
                       <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-accent-cyan rounded-full"></div> Basic Templates</li>
-                      <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-accent-cyan rounded-full"></div> Watermarked PDF</li>
+                      <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-accent-cyan rounded-full"></div> Print Cover Letter</li>
                     </ul>
                     <button className="w-full py-3 border border-surface text-text-secondary font-mono text-xs uppercase font-bold cursor-default opacity-50">
-                       CURRENT_TIER
+                       {(!profile || profile.role === 'guest' || profile.role === 'public') ? 'CURRENT_TIER' : 'FREE_TIER'}
                     </button>
                  </div>
 
                  {/* Student Tier */}
-                 <div className="p-6 border border-accent-purple bg-accent-purple/5 flex flex-col relative">
+                 <div className={`p-4 sm:p-6 border flex flex-col relative ${profile?.role === 'student' ? 'border-accent-purple/50 bg-accent-purple/10' : 'border-accent-purple bg-accent-purple/5'}`}>
                     <div className="absolute top-0 right-0 bg-accent-purple text-white text-[9px] font-bold px-2 py-1 uppercase font-mono">Popular</div>
                     <h3 className="text-xl font-bold mb-2 text-accent-purple">STUDENT</h3>
                     <div className="text-2xl font-bold text-white mb-6">Rp 49.000 <span className="text-sm text-text-secondary font-normal">/mo</span></div>
@@ -779,13 +786,16 @@ ${exp.description}` })
                       <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-accent-purple rounded-full"></div> All ATS & Modern Templates</li>
                       <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-accent-purple rounded-full"></div> No Watermark</li>
                     </ul>
-                    <button className="w-full py-3 bg-accent-purple text-white font-mono text-xs uppercase font-bold hover:bg-accent-purple/90 transition-colors">
-                       UPGRADE_VIA_QRIS
+                    <button
+                      onClick={() => toast.info('COMING_SOON', 'Payment integration via QRIS akan segera tersedia. Hubungi admin@krx.com untuk upgrade manual.')}
+                      className="w-full py-3 bg-accent-purple text-white font-mono text-xs uppercase font-bold hover:bg-accent-purple/90 transition-colors"
+                    >
+                       {profile?.role === 'student' ? 'CURRENT_TIER' : 'UPGRADE_VIA_QRIS'}
                     </button>
                  </div>
 
                  {/* Pro Tier */}
-                 <div className="p-6 border border-accent-cyan bg-accent-cyan/5 flex flex-col">
+                 <div className={`p-4 sm:p-6 border flex flex-col ${['pro', 'family', 'super_admin'].includes(profile?.role || '') ? 'border-accent-cyan/50 bg-accent-cyan/10' : 'border-accent-cyan bg-accent-cyan/5'}`}>
                     <h3 className="text-xl font-bold mb-2 text-accent-cyan">PRO_USER</h3>
                     <div className="text-2xl font-bold text-white mb-6">Rp 99.000 <span className="text-sm text-text-secondary font-normal">/mo</span></div>
                     <ul className="space-y-3 font-mono text-xs text-text-secondary mb-8 flex-1">
@@ -794,8 +804,14 @@ ${exp.description}` })
                       <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-accent-cyan rounded-full"></div> Priority Support</li>
                       <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-accent-cyan rounded-full"></div> Custom Theming</li>
                     </ul>
-                    <button className="w-full py-3 bg-accent-cyan text-black font-mono text-xs uppercase font-bold hover:bg-accent-cyan/90 transition-colors">
-                       UPGRADE_VIA_MIDTRANS
+                    <button
+                      onClick={() => {
+                        if (['pro', 'family', 'super_admin'].includes(profile?.role || '')) return;
+                        toast.info('COMING_SOON', 'Payment integration via Midtrans akan segera tersedia. Hubungi admin@krx.com untuk upgrade manual.');
+                      }}
+                      className={`w-full py-3 font-mono text-xs uppercase font-bold transition-colors ${['pro', 'family', 'super_admin'].includes(profile?.role || '') ? 'border border-surface text-text-secondary cursor-default opacity-50' : 'bg-accent-cyan text-black hover:bg-accent-cyan/90'}`}
+                    >
+                       {['pro', 'family', 'super_admin'].includes(profile?.role || '') ? 'CURRENT_TIER' : 'UPGRADE_VIA_MIDTRANS'}
                     </button>
                  </div>
                </div>

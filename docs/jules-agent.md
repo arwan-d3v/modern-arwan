@@ -40,3 +40,9 @@ Platform ini mengadopsi model SaaS Freemium:
 2. **Checkout & Snap**: Backend API routes (Next.js serverless) akan membuat *charge* dan mengembalikan token Snap Midtrans.
 3. **Payment**: User menyelesaikan pembayaran melalui pop-up/iframe Snap (QRIS, VA, dll).
 4. **Webhook & Provisioning**: Midtrans menembakkan webhook ke sistem. Cloud Functions kemudian memperbarui document di Firestore (mengubah role menjadi tipe langganan berbayar).
+
+## 5. Audit Execution Summary (33 Issues Fixed)
+* **RBAC & Security**: Memperbaiki kerentanan pada `AuthContext` (sekarang men-support 2 email super admin: `admin@krx.com` & `arwan.d3v@gmail.com`), memperkuat `/api/auth/register` dengan token JWT, serta mengunci UI `Profile` menjadi Read-Only. Role `student` telah diintegrasikan sepenuhnya.
+* **Pricing & Logic**: Mengimplementasi auto-reset kuota mingguan (7 hari) untuk akun Free, memperbaiki pengecekan `isPro` agar menyertakan akun `pro`, serta memperbaiki integrasi tier otomatis pada Pricing Modal.
+* **UI/UX & Responsiveness**: Memperbaiki 14 bug cross-device overflow. Ini mencakup *bypassing screen* mobile untuk Cover Letter Builder yang dilengkapi scaling canvas, perbaikan grid dan button wrapping pada CV Builder, penyesuaian gap pada Navbar & Footer, serta terminal Dashboard yang dinamis agar tidak memenuhi layar kecil. 
+* **Next.js Router Fix**: Menyelesaikan error prerender statis `src/pages/profile.tsx` dengan memigrasikannya ke arsitektur App Router terbaru (`src/app/profile/page.tsx`). Semua kode lolos TypeScript compile dan build dengan `Exit Code 0`.

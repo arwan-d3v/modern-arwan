@@ -15,7 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (!uid || !role) {
     return res.status(400).json({ error: 'uid and role are required' });
   }
-  if (!['super_admin', 'user', 'guest'].includes(role)) {
+  if (!['super_admin', 'family', 'pro', 'student', 'guest', 'public'].includes(role)) {
     return res.status(400).json({ error: 'Invalid role' });
   }
   try {

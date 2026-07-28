@@ -37,6 +37,9 @@ export default function CoverLetterPage() {
   const [history, setHistory] = useState<CLHistoryItem[]>([]);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
+  const [dismissMobileWarning, setDismissMobileWarning] = useState(false);
+  const [hideMobileWarningOption, setHideMobileWarningOption] = useState(false);
+
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 1024);
@@ -47,6 +50,11 @@ export default function CoverLetterPage() {
     const saved = localStorage.getItem('cl_history');
     if (saved) {
       try { setHistory(JSON.parse(saved)); } catch (e) {}
+    }
+
+    const savedWarningPref = localStorage.getItem('hide_cl_mobile_warning');
+    if (savedWarningPref === 'true') {
+      setDismissMobileWarning(true);
     }
 
     return () => window.removeEventListener('resize', checkMobile);
@@ -84,19 +92,39 @@ export default function CoverLetterPage() {
     }, 500);
   };
 
-  if (isMobile) {
+  if (isMobile && !dismissMobileWarning) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center p-6 text-center">
         <FadeIn className="max-w-md space-y-6">
           <MonitorOff size={64} className="mx-auto text-accent-cyan opacity-20" />
-          <h1 className="text-2xl font-bold tracking-tighter uppercase">MOBILE_INTERFACE_LOCKED</h1>
+          <h1 className="text-2xl font-bold tracking-tighter uppercase">DESKTOP_RECOMMENDED</h1>
           <p className="text-text-secondary font-mono text-sm leading-relaxed">
             The <span className="text-accent-cyan font-bold">CL_CONSTRUCTOR</span> requires a high-resolution canvas for real-time rendering.
-            Please access this module via a Desktop terminal.
+            For the best experience, please access this module via a Desktop terminal.
           </p>
           <div className="flex flex-col gap-4 pt-4">
-             <Link href="/" className="glass px-6 py-3 font-mono text-xs font-bold uppercase tracking-widest hover:text-accent-cyan">
-                RETURN_TO_BASE
+             <label className="flex items-center justify-center gap-2 text-text-secondary font-mono text-xs cursor-pointer">
+               <input
+                 type="checkbox"
+                 className="accent-accent-cyan w-4 h-4"
+                 checked={hideMobileWarningOption}
+                 onChange={(e) => setHideMobileWarningOption(e.target.checked)}
+               />
+               DO NOT SHOW THIS AGAIN
+             </label>
+             <button
+                onClick={() => {
+                  if (hideMobileWarningOption) {
+                    localStorage.setItem('hide_cl_mobile_warning', 'true');
+                  }
+                  setDismissMobileWarning(true);
+                }}
+                className="glass px-6 py-3 font-mono text-xs font-bold uppercase tracking-widest hover:text-accent-cyan border border-surface bg-white/5"
+             >
+                CONTINUE_ANYWAY
+             </button>
+             <Link href="/" className="text-text-secondary hover:text-white font-mono text-[10px] underline uppercase">
+               RETURN_TO_BASE
              </Link>
           </div>
         </FadeIn>
@@ -192,8 +220,8 @@ export default function CoverLetterPage() {
         </div>
 
         {/* Right Column: Preview */}
-        <div className="bg-[#111111] p-12 flex justify-center overflow-y-auto custom-scrollbar print:p-0 print:bg-white print:block">
-          <div className="w-[210mm] min-h-[297mm] bg-white shadow-2xl origin-top transition-transform duration-500 print:shadow-none print:m-0 print:w-full print:scale-100">
+        <div className="bg-surface p-4 md:p-12 flex justify-center overflow-auto custom-scrollbar print:p-0 print:bg-white print:block">
+          <div className="w-[210mm] min-h-[297mm] bg-white shadow-2xl origin-top transition-transform duration-500 print:shadow-none print:m-0 print:w-full print:scale-100 shrink-0 scale-[0.35] sm:scale-[0.6] md:scale-75 lg:scale-[0.85] xl:scale-100 mx-auto -mb-[180mm] sm:-mb-[100mm] lg:mb-0">
             <div className="h-full text-black bg-white">
                <ATSPreview data={watchedData} />
             </div>

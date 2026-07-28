@@ -5,12 +5,26 @@ import { admin, db as adminDb } from '@/lib/firebaseAdmin';
 /**
  * POST /api/auth/register
  * Body: { uid: string; email: string | null; displayName?: string; photoURL?: string }
- * Creates a user profile with role "user" if it does not exist.
+ * Creates a user profile with role "guest" if it does not exist.
+ * Requires a valid Firebase Auth token.
  */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
+
+  // Verify auth token
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Unauthorized: Missing auth token' });
+  }
+  try {
+    const token = authHeader.split('Bearer ')[1];
+    await admin.auth().verifyIdToken(token);
+  } catch {
+    return res.status(401).json({ error: 'Unauthorized: Invalid token' });
+  }
+
   const { uid, email, displayName, photoURL } = req.body;
   if (!uid) {
     return res.status(400).json({ error: 'uid is required' });
@@ -27,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       email: email || null,
       displayName: displayName || null,
       photoURL: photoURL || null,
-      role: 'user',
+      role: 'guest',
       createdAt: Date.now(),
     };
     await userRef.set(newProfile);
@@ -37,3 +51,4 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(500).json({ error: error.message || 'Internal server error' });
   }
 }
+

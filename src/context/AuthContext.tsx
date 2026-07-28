@@ -40,9 +40,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (snapshot.exists()) {
           setProfile(snapshot.val() as UserProfile);
         } else {
-          // Fallback: if the logged-in email matches the known super-admin address, grant super_admin
-          const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL || 'admin@krx.com';
-          const role = user.email?.toLowerCase() === adminEmail ? 'super_admin' : 'guest';
+          // Support multiple super admin emails
+          const SUPER_ADMIN_EMAILS = [
+            process.env.NEXT_PUBLIC_ADMIN_EMAIL || 'admin@krx.com',
+            'arwan.d3v@gmail.com',
+          ].map(e => e.toLowerCase());
+          const role = SUPER_ADMIN_EMAILS.includes(user.email?.toLowerCase() || '') ? 'super_admin' : 'guest';
           const username = user.displayName ? user.displayName.toLowerCase().replace(/[^a-z0-9]/g, '-') : user.uid;
           const newProfile: UserProfile = {
             uid: user.uid,

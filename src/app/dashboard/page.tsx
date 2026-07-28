@@ -129,7 +129,7 @@ export default function DashboardPage() {
       </FadeIn>
 
       {/* Navigation Tools */}
-      <FadeIn delay={0.2} staggerChildren={0.08} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <FadeIn delay={0.2} staggerChildren={0.08} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <ToolLink
           href="/tools/cv-builder"
           icon={<FileText size={20} />}
@@ -177,7 +177,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Threat Defense */}
-        {!isSuperUser && (
+        {(
           <div className="relative overflow-hidden group">
             <div className="glass p-4 rounded-none h-full border-accent-purple/20">
                <ShieldAlert size={20} className="mb-3 text-accent-purple group-hover:scale-110 transition-transform" />
@@ -257,7 +257,7 @@ export default function DashboardPage() {
           )}
         </div>
 
-        <div className="lg:col-span-2 h-[500px]">
+        <div className="lg:col-span-2 h-[300px] sm:h-[400px] lg:h-[500px]">
           <LiveTerminalLog ref={terminalRef} />
         </div>
       </FadeIn>

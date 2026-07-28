@@ -21,7 +21,7 @@ export default function Footer() {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-[1px] bg-gradient-to-r from-transparent via-accent-cyan to-transparent opacity-50" />
       
       <div className="max-w-7xl mx-auto px-6 py-12 lg:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 lg:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 lg:gap-8">
           
           {/* Brand & Value Proposition */}
           <div className="md:col-span-2 space-y-6">

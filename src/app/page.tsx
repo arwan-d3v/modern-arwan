@@ -24,7 +24,7 @@ export default function Home() {
              <div className="w-2 h-2 rounded-full bg-accent-cyan animate-pulse" />
              <span className="font-mono text-[10px] font-bold text-accent-cyan tracking-[0.3em] uppercase">IS_ARWAN_DEV_ACTIVE</span>
           </div>
-          <h1 className="text-5xl md:text-8xl font-bold tracking-tighter mb-8 bg-gradient-to-b from-text-primary to-text-secondary bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-8xl font-bold tracking-tighter mb-8 bg-gradient-to-b from-text-primary to-text-secondary bg-clip-text text-transparent">
             Build a Portfolio <br />
             <span className="text-accent-cyan">That Gets You Hired</span>
           </h1>

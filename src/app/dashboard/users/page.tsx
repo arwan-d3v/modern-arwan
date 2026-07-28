@@ -95,10 +95,12 @@ export default function UsersManagementPage() {
                         onChange={(e) => handleRoleUpdate(u.uid, e.target.value as UserRole)}
                         className="bg-background border border-white/20 p-2 rounded text-sm outline-none"
                       >
-                        <option value="family">Family</option>
-                        <option value="public">Public</option>
                         <option value="super_admin">Super Admin</option>
+                        <option value="family">Family</option>
+                        <option value="pro">Pro</option>
+                        <option value="student">Student</option>
                         <option value="guest">Guest</option>
+                        <option value="public">Public</option>
                       </select>
                     </td>
                   </tr>
