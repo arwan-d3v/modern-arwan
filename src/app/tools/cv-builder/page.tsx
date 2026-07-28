@@ -26,6 +26,7 @@ import { CVData } from "@/types";
 import FadeIn from "@/components/FadeIn";
 import PhotoUpload from "@/components/PhotoUpload";
 import Modal from "@/components/ui/Modal";
+import ATSCheckerModal from "@/components/ATSCheckerModal";
 import { useToast } from "@/context/ToastContext";
 
 interface CVHistoryItem {
@@ -195,6 +196,7 @@ export default function CVBuilderPage() {
   const [template, setTemplate] = useState<'ATS' | 'MODERN' | 'INDONESIAN'>('MODERN');
   const [history, setHistory] = useState<CVHistoryItem[]>([]);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [isATSOpen, setIsATSOpen] = useState(false);
   const [itemToLoad, setItemToLoad] = useState<CVHistoryItem | null>(null);
   
   const toast = useToast();
@@ -294,9 +296,14 @@ export default function CVBuilderPage() {
                   </div>
                   <h1 className="text-4xl font-bold tracking-tighter uppercase mt-2">Generate_Resume</h1>
                 </div>
-                <button onClick={() => setIsHistoryOpen(true)} className="flex items-center gap-2 font-mono text-[10px] font-bold uppercase border border-surface bg-surface text-text-secondary px-4 py-2 hover:border-accent-cyan/50 hover:text-accent-cyan transition-colors">
-                   <History size={14} /> PROJECT_VAULT
-                </button>
+                <div className="flex gap-2">
+                  <button onClick={() => setIsATSOpen(true)} className="flex items-center gap-2 font-mono text-[10px] font-bold uppercase border border-accent-purple bg-accent-purple/10 text-accent-purple px-4 py-2 hover:bg-accent-purple hover:text-white transition-colors">
+                     <AlertCircle size={14} /> ATS_SCAN
+                  </button>
+                  <button onClick={() => setIsHistoryOpen(true)} className="flex items-center gap-2 font-mono text-[10px] font-bold uppercase border border-surface bg-surface text-text-secondary px-4 py-2 hover:border-accent-cyan/50 hover:text-accent-cyan transition-colors">
+                     <History size={14} /> PROJECT_VAULT
+                  </button>
+                </div>
               </div>
               <div className="flex flex-col md:flex-row gap-4">
                 <div className="flex flex-1 gap-2">
@@ -639,6 +646,13 @@ export default function CVBuilderPage() {
         dangerous={true}
         onConfirm={handleLoadHistory}
         onCancel={() => setItemToLoad(null)}
+      />
+
+      {/* ATS Scan Modal */}
+      <ATSCheckerModal 
+        isOpen={isATSOpen}
+        onClose={() => setIsATSOpen(false)}
+        data={watchedData}
       />
 
       <style jsx global>{`

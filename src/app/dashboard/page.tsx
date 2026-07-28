@@ -28,8 +28,32 @@ export default function DashboardPage() {
   const toast = useToast();
   const [metrics, setMetrics] = useState<SystemMetrics | null>(null);
   const [isInitializing, setIsInitializing] = useState(true);
+  const [currentTime, setCurrentTime] = useState<string>('');
+  const [showWelcome, setShowWelcome] = useState(false);
 
-  const isSuperUser = profile?.role === 'super_admin' || !process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+  useEffect(() => {
+    if (profile) {
+      const hasSeenWelcome = localStorage.getItem('hasSeenWelcome');
+      if (!hasSeenWelcome) {
+        setShowWelcome(true);
+      }
+    }
+  }, [profile]);
+
+  const closeWelcome = () => {
+    localStorage.setItem('hasSeenWelcome', 'true');
+    setShowWelcome(false);
+  };
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const now = new Date();
+      setCurrentTime(now.toLocaleTimeString('en-US', { hour12: false, timeZone: 'UTC' }) + ' UTC');
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const isSuperUser = profile?.role === 'super_admin';
 
   useEffect(() => {
     // Fake initialization delay for cinematic effect
@@ -67,7 +91,27 @@ export default function DashboardPage() {
   }, [toast]);
 
   return (
-    <div className="max-w-7xl mx-auto px-6 md:px-12 py-10 space-y-8">
+    <div className="max-w-7xl mx-auto px-6 md:px-12 py-10 space-y-8 relative">
+      {/* Welcome Onboarding Modal */}
+      {showWelcome && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <FadeIn className="glass p-8 max-w-md w-full rounded-xl border border-accent-cyan/30 relative shadow-[0_0_30px_rgba(0,242,255,0.1)]">
+            <h2 className="text-2xl font-mono font-bold text-white mb-2">Welcome to the System</h2>
+            <p className="text-text-secondary text-sm leading-relaxed mb-6">
+              Your profile has been successfully initialized. You are currently logged in as a 
+              <span className="text-accent-cyan font-mono uppercase ml-1">{profile?.role || 'guest'}</span>. 
+              Explore the CV Builder and Dashboard telemetry.
+            </p>
+            <button 
+              onClick={closeWelcome}
+              className="w-full py-3 bg-accent-cyan text-background font-mono font-bold uppercase tracking-widest hover:bg-white transition-colors"
+            >
+              Initialize Workspace
+            </button>
+          </FadeIn>
+        </div>
+      )}
+
       {/* Header */}
       <FadeIn delay={0.1} direction="down" className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
@@ -79,7 +123,7 @@ export default function DashboardPage() {
         <div className="flex gap-4">
           <div className="glass px-4 py-2 rounded-none flex items-center gap-3 border-accent-cyan/20">
             <Clock size={14} className="text-accent-cyan" />
-            <span className="font-mono text-xs">23:44:12 UTC</span>
+            <span className="font-mono text-xs">{currentTime || '00:00:00 UTC'}</span>
           </div>
         </div>
       </FadeIn>

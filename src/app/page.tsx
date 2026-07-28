@@ -1,28 +1,16 @@
 import dynamic from "next/dynamic";
 import FadeIn from "@/components/FadeIn";
 import { Server, Zap, Shield, Terminal } from "lucide-react";
+import WaitlistForm from "@/components/WaitlistForm";
 
 const ExperienceSection = dynamic(() => import("@/components/ExperienceSection"), { ssr: true });
 const SkillsSection = dynamic(() => import("@/components/SkillsSection"), { ssr: true });
 const ShowcaseSection = dynamic(() => import("@/components/ShowcaseSection"), { ssr: true });
 const HeroSlider = dynamic(() => import("@/components/HeroSlider"), { ssr: false });
 
-interface StatCardProps {
-  label: string;
-  value: string;
-  icon: React.ReactNode;
-  delay?: number;
-}
-
-const StatCard = ({ label, value, icon, delay = 0 }: StatCardProps) => (
-  <FadeIn delay={delay} className="glass glass-hover p-6 rounded-none flex flex-col gap-4 border-accent-cyan/10">
-    <div className="text-accent-cyan">{icon}</div>
-    <div>
-      <div className="text-3xl font-mono font-bold text-text-primary tracking-tighter">{value}</div>
-      <div className="text-[10px] font-mono uppercase tracking-[0.2em] text-text-secondary font-bold">{label}</div>
-    </div>
-  </FadeIn>
-);
+import DynamicStats from "@/components/DynamicStats";
+import FeaturesOverview from "@/components/FeaturesOverview";
+import TestimonialSection from "@/components/TestimonialSection";
 
 export default function Home() {
   return (
@@ -37,8 +25,8 @@ export default function Home() {
              <span className="font-mono text-[10px] font-bold text-accent-cyan tracking-[0.3em] uppercase">IS_ARWAN_DEV_ACTIVE</span>
           </div>
           <h1 className="text-5xl md:text-8xl font-bold tracking-tighter mb-8 bg-gradient-to-b from-text-primary to-text-secondary bg-clip-text text-transparent">
-            Free CMS For Your CV & <br />
-            <span className="text-accent-cyan">Portfolio Projects</span>
+            Build a Portfolio <br />
+            <span className="text-accent-cyan">That Gets You Hired</span>
           </h1>
         </FadeIn>
 
@@ -47,33 +35,31 @@ export default function Home() {
         </FadeIn>
 
         <FadeIn delay={0.4}>
-          <p className="text-lg md:text-xl text-text-secondary max-w-2xl leading-relaxed mt-8 mb-12 font-medium">
-            Building resilient algorithmic trading systems, automated data pipelines,
-            and scalable network infrastructures. Focused on performance, security, and high-frequency execution.
+          <p className="text-lg md:text-xl text-text-secondary max-w-2xl leading-relaxed mt-8 mb-8 font-medium">
+            AI-powered CV Builder, ATS-optimized cover letter generator, and personal portfolio workspace — all in one place.
           </p>
+          <div className="flex flex-wrap gap-4 mb-8">
+            <a href="/tools/cv-builder" className="px-8 py-4 bg-accent-cyan text-background font-mono font-bold uppercase tracking-widest hover:bg-white transition-colors">
+              Get Started Free
+            </a>
+            <a href="/dashboard" className="px-8 py-4 glass border border-accent-cyan/20 text-text-primary font-mono font-bold uppercase tracking-widest hover:border-accent-cyan transition-colors">
+              See Live Demo
+            </a>
+          </div>
+          
+          <div className="mt-8">
+            <WaitlistForm />
+          </div>
         </FadeIn>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <StatCard
-            icon={<Zap size={24} />}
-            label="Active Trading Bots"
-            value="03"
-            delay={0.4}
-          />
-          <StatCard
-            icon={<Server size={24} />}
-            label="Network Edge Nodes"
-            value="07"
-            delay={0.5}
-          />
-          <StatCard
-            icon={<Shield size={24} />}
-            label="System Uptime"
-            value="99.9%"
-            delay={0.6}
-          />
-        </div>
+        <DynamicStats />
       </section>
+
+      {/* Features Overview */}
+      <FeaturesOverview />
+
+      {/* Testimonial Section */}
+      <TestimonialSection />
 
       {/* Experience Section */}
       <ExperienceSection />
@@ -84,18 +70,7 @@ export default function Home() {
       {/* Showcase Section */}
       <ShowcaseSection />
 
-      {/* Footer */}
-      <footer className="pt-20 pb-10 border-t border-surface flex flex-col md:flex-row justify-between items-center gap-8">
-        <div className="flex items-center gap-2">
-          <Terminal className="text-accent-cyan" size={20} />
-          <span className="font-mono font-bold tracking-tighter text-sm uppercase">IS_ARWAN.DEV // 2024</span>
-        </div>
-        <div className="flex gap-12">
-          {["GITHUB", "LINKEDIN", "TWITTER"].map(link => (
-            <a key={link} href="#" className="text-[10px] font-mono font-bold tracking-[0.3em] text-text-secondary hover:text-accent-cyan transition-colors">{link}</a>
-          ))}
-        </div>
-      </footer>
+
     </div>
   );
 }

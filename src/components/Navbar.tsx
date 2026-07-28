@@ -12,7 +12,7 @@ export default function Navbar() {
   const { profile, logout } = useAuth();
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = React.useState(false);
-  const isSuperUser = profile?.role === 'super_admin' || !process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+  const isSuperUser = profile?.role === 'super_admin';
 
   return (
     <>

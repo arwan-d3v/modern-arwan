@@ -11,46 +11,65 @@ export default function AboutPage() {
         animate={{ opacity: 1, y: 0 }}
         className="max-w-4xl w-full"
       >
-        <h1 className="text-4xl md:text-5xl font-bold font-mono text-accent-cyan mb-8 uppercase tracking-tighter">
-          &gt; ABOUT_ME
-        </h1>
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+          <h1 className="text-4xl md:text-5xl font-bold font-mono text-accent-cyan uppercase tracking-tighter">
+            &gt; SYSTEM_ADMIN_LOG
+          </h1>
+          <a 
+            href="#" 
+            className="inline-flex items-center gap-2 px-6 py-3 bg-white/5 border border-accent-cyan/30 text-accent-cyan font-mono text-sm font-bold uppercase tracking-widest hover:bg-accent-cyan hover:text-black transition-colors"
+          >
+            <Terminal size={16} /> Download CV
+          </a>
+        </div>
         
-        <div className="glass p-8 rounded-xl border border-white/10 mb-12">
-          <p className="text-lg text-text-primary mb-6 leading-relaxed">
-            I am a highly driven full-stack engineer and UI/UX enthusiast. 
-            My mission is to craft digital experiences that are not only robust and scalable 
-            but also visually captivating. I believe that code is poetry and interface design is art.
-          </p>
-          <p className="text-lg text-text-secondary leading-relaxed">
-            With a background in both front-end micro-animations and back-end system architecture, 
-            I bridge the gap between design and technical execution.
-          </p>
+        <div className="glass p-8 md:p-10 rounded-xl border border-white/10 mb-12 relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-4 opacity-10">
+            <Cpu size={120} />
+          </div>
+          <div className="relative z-10 space-y-6 text-lg">
+            <p className="text-text-primary leading-relaxed">
+              My journey didn&apos;t start in a pristine server room. It started in the dirt, oil, and extreme environments of mining pits.
+            </p>
+            <p className="text-text-secondary leading-relaxed">
+              As a vocational graduate in Heavy Equipment Mechanics, my early career was defined by troubleshooting massive excavators and rotary drills. I learned quickly that a single point of failure in a complex mechanical system could halt an entire operation. This foundational experience forged my analytical mindset and deep appreciation for robust, fail-safe architectures.
+            </p>
+            <p className="text-text-secondary leading-relaxed">
+              My journey into technology started with a simple curiosity: &quot;How does this work?&quot; That curiosity quickly turned into a lifelong hobby of tinkering with computers. Technology is a vast, ever-expanding universe, and I&apos;ve always loved learning and improving my skills. Whether it&apos;s optimizing a backend service or polishing a user interface, I approach every project with the mindset of a Full-Stack Engineer who values both performance and aesthetics.
+            </p>
+            <p className="text-text-primary font-medium leading-relaxed">
+              Today, as a Field Network & FMS Technician, I design and deploy critical wireless networks (LTE/WAN) across active mining sites, ensuring heavy equipment and control centers communicate flawlessly. And when I&apos;m not configuring network nodes at heights, I&apos;m building high-performance web applications, algorithmic trading systems, and modern UI/UX experiences.
+            </p>
+            <p className="text-accent-cyan font-mono text-sm tracking-widest uppercase pt-4">
+              [ MECHANIC &gt; IT SUPPORT &gt; NETWORK ENGINEER &gt; FULL-STACK DEVELOPER ]
+            </p>
+          </div>
         </div>
 
         <h2 className="text-2xl font-mono text-white mb-6 uppercase tracking-widest border-b border-white/10 pb-4">
-          Core Principles
+          Core Hardware & Software Stack
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <PrincipleCard 
-            icon={<Code size={32} className="text-accent-cyan" />}
-            title="Clean Architecture"
-            desc="Maintainable, testable, and loosely coupled codebases."
+            icon={<Cpu size={32} className="text-accent-cyan" />}
+            title="Field Operations & Hardware"
+            desc="Expert in heavy machinery maintenance, LOTO safety clearances, and remote site hardware deployment."
           />
           <PrincipleCard 
-            icon={<Terminal size={32} className="text-accent-purple" />}
+            icon={<Globe size={32} className="text-accent-purple" />}
+            title="Network Infrastructure"
+            desc="Designing and troubleshooting wired/wireless LAN/WAN/LTE topologies for Fleet Management Systems."
+          />
+          <PrincipleCard 
+            icon={<Code size={32} className="text-emerald-400" />}
+            title="Software Engineering"
+            desc="Building robust applications and data pipelines using React, Node.js, Python, and Supabase/Firebase."
+          />
+          <PrincipleCard 
+            icon={<Terminal size={32} className="text-rose-400" />}
             title="System Automation"
-            desc="Automating the mundane to focus on the complex."
-          />
-          <PrincipleCard 
-            icon={<Globe size={32} className="text-emerald-400" />}
-            title="Global Accessibility"
-            desc="Building products that everyone can use, regardless of ability."
-          />
-          <PrincipleCard 
-            icon={<Cpu size={32} className="text-rose-400" />}
-            title="High Performance"
-            desc="Optimizing for speed, minimal bundle sizes, and low latency."
+            desc="Developing trading algorithms (MQL5) and automated monitoring dashboards to minimize downtime."
           />
         </div>
       </motion.div>

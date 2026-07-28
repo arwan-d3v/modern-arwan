@@ -8,6 +8,8 @@ import { ShowcaseProject } from "@/types";
 import FadeIn from "./FadeIn";
 import { ExternalLink, Box } from "lucide-react";
 import MediaModal from "./MediaModal";
+import { Skeleton } from "./ui/Skeleton";
+import { EmptyState } from "./ui/EmptyState";
 
 export default function ShowcaseSection() {
   const [projects, setProjects] = useState<ShowcaseProject[]>([]);
@@ -42,8 +44,6 @@ export default function ShowcaseSection() {
     return () => unsubscribe();
   }, []);
 
-  if (loading) return null;
-
   return (
     <section id="showcase" className="space-y-12 pb-20">
       <FadeIn>
@@ -55,13 +55,26 @@ export default function ShowcaseSection() {
         </div>
       </FadeIn>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {projects.map((project, index) => (
-          <FadeIn key={project.id || index} delay={index * 0.1}>
-            <ProjectCard project={project} onClick={() => setSelectedProject(project)} />
-          </FadeIn>
-        ))}
-      </div>
+      {loading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {[1, 2].map((i) => (
+            <Skeleton key={i} className="h-80 w-full rounded-none" />
+          ))}
+        </div>
+      ) : projects.length === 0 ? (
+        <EmptyState 
+          title="No Projects Yet" 
+          description="The showcase vault is currently empty." 
+        />
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {projects.map((project, index) => (
+            <FadeIn key={project.id || index} delay={index * 0.1}>
+              <ProjectCard project={project} onClick={() => setSelectedProject(project)} />
+            </FadeIn>
+          ))}
+        </div>
+      )}
 
       {selectedProject && (
         <MediaModal

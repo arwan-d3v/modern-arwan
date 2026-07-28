@@ -29,33 +29,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-  console.log('AuthListener started');
-      const unsubscribe = onAuthStateChanged(auth, async (user) => {
-    console.log('Auth state changed: user', user?.uid, user?.email);
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
 
-          if (user) {
+      if (user) {
         // Fetch or create profile from Realtime Database
-              const userRef = ref(rtdb, `users/${user.uid}`);
-      console.log('Fetching profile from RTDB path', `users/${user.uid}`);
-              const snapshot = await get(userRef);
-      console.log('Snapshot exists?', snapshot.exists());
-      if (snapshot.exists()) {
-        console.log('Profile data:', snapshot.val());
-      }
+        const userRef = ref(rtdb, `users/${user.uid}`);
+        const snapshot = await get(userRef);
 
         if (snapshot.exists()) {
           setProfile(snapshot.val() as UserProfile);
         } else {
-          // Fallback: if the logged‑in email matches the known super‑admin address, grant super_admin
-          const adminEmail = 'admin@krx.com';
+          // Fallback: if the logged-in email matches the known super-admin address, grant super_admin
+          const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL || 'admin@krx.com';
           const role = user.email?.toLowerCase() === adminEmail ? 'super_admin' : 'guest';
+          const username = user.displayName ? user.displayName.toLowerCase().replace(/[^a-z0-9]/g, '-') : user.uid;
           const newProfile: UserProfile = {
             uid: user.uid,
             email: user.email,
             displayName: user.displayName,
             photoURL: user.photoURL,
             role,
+            username,
             createdAt: Date.now(),
           };
           if (process.env.NEXT_PUBLIC_FIREBASE_API_KEY) {
@@ -66,9 +61,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } else {
         setProfile(null);
       }
-            setLoading(false);
+      setLoading(false);
     });
-    console.log('AuthListener setup complete');
 
 
     return () => unsubscribe();

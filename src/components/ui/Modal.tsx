@@ -12,6 +12,7 @@ interface ModalProps {
   onConfirm: () => void;
   onCancel: () => void;
   dangerous?: boolean;
+  children?: React.ReactNode;
 }
 
 export default function Modal({
@@ -23,6 +24,7 @@ export default function Modal({
   onConfirm,
   onCancel,
   dangerous = false,
+  children,
 }: ModalProps) {
   const accentColor = dangerous ? "#f87171" : "#fbbf24";
   const glow = dangerous ? "rgba(248,113,113,0.18)" : "rgba(251,191,36,0.15)";
@@ -118,9 +120,17 @@ export default function Modal({
               </div>
 
               {/* Message */}
-              <p className="text-sm text-text-secondary leading-relaxed mb-6 font-sans">
-                {message}
-              </p>
+              {message && (
+                <p className="text-sm text-text-secondary leading-relaxed mb-6 font-sans">
+                  {message}
+                </p>
+              )}
+
+              {children && (
+                <div className="mb-6">
+                  {children}
+                </div>
+              )}
 
               {/* Actions */}
               <div className="flex gap-3">
