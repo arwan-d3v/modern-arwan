@@ -13,7 +13,7 @@ import {
   Printer,
   MonitorOff,
   AlertCircle,
-  History,
+  History, Check,
   X,
   Mail,
   Phone,
@@ -182,6 +182,8 @@ export default function CVBuilderPage() {
   const [isMobile, setIsMobile] = useState(false);
   const [history, setHistory] = useState<CVHistoryItem[]>([]);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [continueMobile, setContinueMobile] = useState(false);
+  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -247,6 +249,14 @@ export default function CVBuilderPage() {
   const watchedData = watch();
 
   const handlePrint = () => {
+    // Quota check simulation
+    const quota = parseInt(localStorage.getItem('cv_pdf_quota') || '0');
+    if (quota >= 2) {
+      setIsPricingModalOpen(true);
+      return;
+    }
+    localStorage.setItem('cv_pdf_quota', (quota + 1).toString());
+
     const newItem: CVHistoryItem = {
       id: Date.now().toString(),
       date: new Date().toLocaleString(),
@@ -257,24 +267,41 @@ export default function CVBuilderPage() {
     setHistory(updatedHistory);
     localStorage.setItem('cv_history', JSON.stringify(updatedHistory));
     
-    window.print();
+    const originalTitle = document.title;
+    const date = new Date();
+    const formattedDate = `${String(date.getDate()).padStart(2, '0')} ${String(date.getMonth() + 1).padStart(2, '0')} ${date.getFullYear()}`;
+    const name = watchedData.personalInfo.fullName || 'User';
+    const title = watchedData.personalInfo.title || 'Professional';
+    document.title = `${name} - ${title} - ${formattedDate} - made by is.arwan.vercel.app (CV and Portofolio showcase Profesional)`;
+
+    setTimeout(() => {
+      window.print();
+      document.title = originalTitle;
+    }, 100);
   };
 
-  if (isMobile) {
+  const handleExportWord = () => {
+    setIsPricingModalOpen(true);
+  };
+
+  if (isMobile && !continueMobile) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center p-6 text-center">
         <FadeIn className="max-w-md space-y-6">
           <MonitorOff size={64} className="mx-auto text-accent-cyan opacity-20" />
-          <h1 className="text-2xl font-bold tracking-tighter uppercase">MOBILE_INTERFACE_LOCKED</h1>
+          <h1 className="text-2xl font-bold tracking-tighter uppercase">DESKTOP_RECOMMENDED</h1>
           <p className="text-text-secondary font-mono text-sm leading-relaxed">
-            The <span className="text-accent-cyan font-bold">CV_CONSTRUCTOR</span> requires a high-resolution canvas for real-time rendering.
-            Please access this module via a Desktop terminal (width {">"} 1024px).
+            The <span className="text-accent-cyan font-bold">CV_CONSTRUCTOR</span> is best viewed on a high-resolution canvas for real-time rendering.
+            You can continue on mobile, but the preview will be moved to the bottom.
           </p>
           <div className="flex flex-col gap-4 pt-4">
              <div className="flex items-center gap-2 text-[10px] font-mono text-accent-purple justify-center">
                 <AlertCircle size={14} /> SYSTEM_PRE-REQUISITE: RESOLUTION_1080P
              </div>
-             <a href="/" className="glass px-6 py-3 font-mono text-xs font-bold uppercase tracking-widest hover:text-accent-cyan">
+             <button onClick={() => setContinueMobile(true)} className="glass px-6 py-3 font-mono text-xs font-bold uppercase tracking-widest hover:text-accent-cyan">
+                CONTINUE_ANYWAY
+             </button>
+             <a href="/" className="px-6 py-3 font-mono text-xs font-bold uppercase tracking-widest text-text-secondary hover:text-white">
                 RETURN_TO_BASE
              </a>
           </div>
@@ -285,9 +312,9 @@ export default function CVBuilderPage() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2 bg-background print:bg-white print:block">
+      <div className={`min-h-screen flex flex-col lg:grid lg:grid-cols-2 bg-background print:bg-white print:block`}>
         {/* Left Column: Form */}
-        <div className="h-screen overflow-y-auto p-8 md:p-12 border-r border-surface custom-scrollbar print:hidden">
+        <div className="lg:h-screen overflow-y-auto p-4 lg:p-8 md:p-12 border-b lg:border-r border-surface custom-scrollbar print:hidden">
           <div className="max-w-xl mx-auto space-y-12">
             <header className="space-y-4">
               <div className="flex justify-between items-start">
@@ -537,12 +564,20 @@ export default function CVBuilderPage() {
                     NEXT_MODULE <ChevronRight size={14} />
                   </button>
                 ) : (
-                  <button
-                    onClick={handlePrint}
-                    className="flex items-center gap-2 font-mono text-[10px] font-bold uppercase bg-accent-cyan text-black px-6 py-2 hover:bg-accent-cyan/90"
-                  >
-                    <Printer size={14} /> INITIALIZE_PRINT
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleExportWord}
+                      className="flex items-center gap-2 font-mono text-[10px] font-bold uppercase bg-accent-purple text-white px-4 py-2 hover:bg-accent-purple/90"
+                    >
+                      <Download size={14} /> WORD
+                    </button>
+                    <button
+                      onClick={handlePrint}
+                      className="flex items-center gap-2 font-mono text-[10px] font-bold uppercase bg-accent-cyan text-black px-4 py-2 hover:bg-accent-cyan/90"
+                    >
+                      <Printer size={14} /> PDF
+                    </button>
+                  </div>
                 )}
               </div>
             </div>
@@ -550,8 +585,8 @@ export default function CVBuilderPage() {
         </div>
 
         {/* Right Column: Preview */}
-        <div className="bg-[#111111] p-12 flex justify-center overflow-y-auto custom-scrollbar print:p-0 print:bg-white print:block">
-          <div className="w-[210mm] min-h-[297mm] bg-white shadow-2xl origin-top transition-transform duration-500 print:shadow-none print:m-0 print:w-full print:scale-100">
+        <div className="bg-[#111111] p-4 lg:p-12 flex justify-center lg:overflow-y-auto overflow-x-auto custom-scrollbar print:p-0 print:bg-white print:block">
+          <div className="w-[210mm] min-w-[210mm] min-h-[297mm] bg-white shadow-2xl origin-top lg:scale-100 scale-[0.45] sm:scale-75 lg:origin-top lg:transition-transform lg:duration-500 print:shadow-none print:m-0 print:w-full print:scale-100 mb-[-150mm] sm:mb-[-50mm] lg:mb-0">
             <div className="h-full text-black bg-white">
               {template === 'ATS' ? (
                 <ATSPreview data={watchedData} />
@@ -564,6 +599,82 @@ export default function CVBuilderPage() {
           </div>
         </div>
       </div>
+
+      {/* Pricing Modal */}
+      {isPricingModalOpen && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm print:hidden">
+          <FadeIn className="bg-[#111111] border border-surface w-full max-w-4xl max-h-[90vh] overflow-y-auto custom-scrollbar flex flex-col">
+            <div className="p-4 border-b border-surface flex justify-between items-center sticky top-0 bg-[#111111] z-10">
+               <div className="font-mono text-xs font-bold uppercase tracking-widest text-accent-cyan flex items-center gap-2">
+                 UPGRADE_REQUIRED
+               </div>
+               <button onClick={() => setIsPricingModalOpen(false)} className="text-text-secondary hover:text-white"><X size={16} /></button>
+            </div>
+
+            <div className="p-8 text-center space-y-4">
+               <h2 className="text-3xl font-bold uppercase tracking-tight">Unlock Full Potential</h2>
+               <p className="text-text-secondary font-mono text-sm max-w-2xl mx-auto">
+                 You have reached your free tier limits or requested a premium feature (Word Export). Choose a plan below to continue.
+               </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-8 pt-0">
+               {/* Free Tier */}
+               <div className="border border-surface p-6 flex flex-col space-y-6">
+                 <div>
+                   <h3 className="text-lg font-bold uppercase text-white">Free</h3>
+                   <div className="text-2xl font-bold mt-2">Rp 0</div>
+                 </div>
+                 <ul className="space-y-3 font-mono text-xs text-text-secondary flex-1">
+                   <li className="flex gap-2"><Check size={14} className="text-accent-cyan shrink-0" /> Basic Templates</li>
+                   <li className="flex gap-2"><Check size={14} className="text-accent-cyan shrink-0" /> 2 PDF Exports / week</li>
+                   <li className="flex gap-2"><X size={14} className="text-red-500 shrink-0" /> No Word Export</li>
+                   <li className="flex gap-2"><X size={14} className="text-red-500 shrink-0" /> Vault limited to 1</li>
+                 </ul>
+                 <button disabled className="w-full py-2 bg-surface text-text-secondary font-mono text-[10px] font-bold uppercase opacity-50 cursor-not-allowed">
+                   CURRENT_PLAN
+                 </button>
+               </div>
+
+               {/* Student Tier */}
+               <div className="border border-accent-purple p-6 flex flex-col space-y-6 relative overflow-hidden">
+                 <div className="absolute top-0 right-0 bg-accent-purple text-black font-mono text-[8px] font-bold px-2 py-1 uppercase">Best Value</div>
+                 <div>
+                   <h3 className="text-lg font-bold uppercase text-accent-purple">Student</h3>
+                   <div className="text-2xl font-bold mt-2">Rp 15.000<span className="text-sm text-text-secondary font-normal">/mo</span></div>
+                 </div>
+                 <ul className="space-y-3 font-mono text-xs text-text-secondary flex-1">
+                   <li className="flex gap-2"><Check size={14} className="text-accent-purple shrink-0" /> All Templates</li>
+                   <li className="flex gap-2"><Check size={14} className="text-accent-purple shrink-0" /> 10 Exports / week</li>
+                   <li className="flex gap-2"><Check size={14} className="text-accent-purple shrink-0" /> Word (.docx) Export</li>
+                   <li className="flex gap-2"><Check size={14} className="text-accent-purple shrink-0" /> Vault up to 5</li>
+                   <li className="flex gap-2"><Check size={14} className="text-accent-purple shrink-0" /> No Watermarks</li>
+                 </ul>
+                 <button onClick={() => alert('Midtrans QRIS integration pending...')} className="w-full py-2 bg-accent-purple hover:bg-accent-purple/90 text-white font-mono text-[10px] font-bold uppercase transition-colors">
+                   UPGRADE_STUDENT (QRIS)
+                 </button>
+               </div>
+
+               {/* Pro Tier */}
+               <div className="border border-accent-cyan p-6 flex flex-col space-y-6">
+                 <div>
+                   <h3 className="text-lg font-bold uppercase text-accent-cyan">Pro</h3>
+                   <div className="text-2xl font-bold mt-2">Rp 49.000<span className="text-sm text-text-secondary font-normal">/mo</span></div>
+                 </div>
+                 <ul className="space-y-3 font-mono text-xs text-text-secondary flex-1">
+                   <li className="flex gap-2"><Check size={14} className="text-accent-cyan shrink-0" /> All Templates & Features</li>
+                   <li className="flex gap-2"><Check size={14} className="text-accent-cyan shrink-0" /> Unlimited Exports</li>
+                   <li className="flex gap-2"><Check size={14} className="text-accent-cyan shrink-0" /> Unlimited Vault</li>
+                   <li className="flex gap-2"><Check size={14} className="text-accent-cyan shrink-0" /> Priority Support</li>
+                 </ul>
+                 <button onClick={() => alert('Midtrans QRIS integration pending...')} className="w-full py-2 bg-accent-cyan hover:bg-accent-cyan/90 text-black font-mono text-[10px] font-bold uppercase transition-colors">
+                   UPGRADE_PRO (QRIS)
+                 </button>
+               </div>
+            </div>
+          </FadeIn>
+        </div>
+      )}
 
       {/* History Modal */}
       {isHistoryOpen && (
