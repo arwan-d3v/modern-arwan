@@ -61,36 +61,19 @@ export default function CVBuilderPage() {
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isATSOpen, setIsATSOpen] = useState(false);
   const [itemToLoad, setItemToLoad] = useState<CVHistoryItem | null>(null);
-  const [isMobile, setIsMobile] = useState(false);
-  const [dismissMobileWarning, setDismissMobileWarning] = useState(false);
-  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
-  const [hideMobileWarningOption, setHideMobileWarningOption] = useState(false);
-  
+
   const toast = useToast();
   const { user, profile } = useAuth();
 
-  
+
   useEffect(() => {
     const saved = localStorage.getItem('cv_history');
     if (saved) {
       try { setHistory(JSON.parse(saved)); } catch (e) {}
     }
-
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 1024); // lg breakpoint
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-
-    const savedWarningPref = localStorage.getItem('hide_mobile_warning');
-    if (savedWarningPref === 'true') {
-      setDismissMobileWarning(true);
-    }
-
-    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  
+
 
   const { register, control, watch, handleSubmit, reset, setValue } = useForm<CVData>({
     defaultValues: DEFAULT_DATA_MODERN,
@@ -146,22 +129,21 @@ export default function CVBuilderPage() {
       return;
     }
     const isPro = profile.role === 'super_admin' || profile.role === 'family';
-    
+
     if (!isPro) {
       const userRef = doc(db, 'users', user.uid);
       const userSnap = await getDoc(userRef);
-      let pdfExportCount = 0;
       if (userSnap.exists()) {
-        pdfExportCount = userSnap.data().pdfExportCount || 0;
-
-        // Simulasikan pengecekan kuota mingguan (>= 2)
-        if (pdfExportCount >= 2) {
-          setIsPricingModalOpen(true);
-          toast.error('QUOTA_EXCEEDED', 'You have reached the maximum PDF exports. Upgrade your plan.');
-          return;
+        const lastExport = userSnap.data().lastPdfExportDate;
+        if (lastExport) {
+          const daysSinceLastExport = (Date.now() - lastExport) / (1000 * 60 * 60 * 24);
+          if (daysSinceLastExport < 7) {
+            toast.error('QUOTA_EXCEEDED', 'Guest users can only export to PDF once a week. Please upgrade to Pro.');
+            return;
+          }
         }
       }
-      await setDoc(userRef, { pdfExportCount: pdfExportCount + 1, lastPdfExportDate: Date.now() }, { merge: true });
+      await setDoc(userRef, { lastPdfExportDate: Date.now() }, { merge: true });
     }
 
     const newItem: CVHistoryItem = {
@@ -173,7 +155,7 @@ export default function CVBuilderPage() {
     const updatedHistory = [newItem, ...history].slice(0, 20);
     setHistory(updatedHistory);
     localStorage.setItem('cv_history', JSON.stringify(updatedHistory));
-    
+
     try {
       const draftRef = doc(collection(db, `users/${user.uid}/cv_drafts`), newItem.id);
       await setDoc(draftRef, newItem);
@@ -181,38 +163,24 @@ export default function CVBuilderPage() {
     } catch (e) {
       console.error('Save error', e);
     }
-    
+
     toast.success("PROCESSING", "Generating PDF natively...");
-    
+
     try {
       const element = document.getElementById('cv-export-container');
       if (!element) return;
-      
+
       const html2pdf = (await import('html2pdf.js')).default;
-
-      // Naming Convention: "[Nama User] - [Jabatan Terakhir] - [DD MM YYYY] - made by is.arwan.vercel.app (CV and Portofolio showcase Profesional)"
-      const userName = watchedData.personalInfo.fullName?.trim() || "Untitled";
-      const userJob = watchedData.personalInfo.title?.trim() || "Role";
-      const date = new Date();
-      const formattedDate = `${String(date.getDate()).padStart(2, '0')} ${String(date.getMonth() + 1).padStart(2, '0')} ${date.getFullYear()}`;
-
-      const filename = `${userName} - ${userJob} - ${formattedDate} - made by is.arwan.vercel.app (CV and Portofolio showcase Profesional).pdf`;
-
-      // Simpan document.title asli, set title baru untuk print
-      const originalTitle = document.title;
-      document.title = filename.replace('.pdf', '');
-
       const opt: any = {
         margin:       0,
-        filename:     filename,
+        filename:     `${watchedData.personalInfo.fullName.replace(/\s+/g, '_')}_CV.pdf`,
         image:        { type: 'jpeg', quality: 0.98 },
         html2canvas:  { scale: 2, useCORS: true, letterRendering: true, windowWidth: 794 },
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
         pagebreak:    { mode: 'css', avoid: '.avoid-break' }
       };
-      
+
       await html2pdf().set(opt).from(element).save();
-      document.title = originalTitle;
       toast.success("SUCCESS", "PDF Downloaded.");
     } catch (error) {
       console.error(error);
@@ -225,17 +193,16 @@ export default function CVBuilderPage() {
       toast.error('AUTH_REQUIRED', 'Please login to export to Word.');
       return;
     }
-    
+
     const isPro = profile.role === 'super_admin' || profile.role === 'family';
     if (!isPro) {
-      setIsPricingModalOpen(true);
       toast.error('PRO_FEATURE', 'Word export is available for Pro users only.');
       return;
     }
 
     try {
       toast.success('PROCESSING', 'Generating DOCX file...');
-      
+
       const { Document, Packer, Paragraph, TextRun, HeadingLevel } = await import('docx');
       const { saveAs } = await import('file-saver');
 
@@ -258,14 +225,14 @@ export default function CVBuilderPage() {
             new Paragraph({ text: watchedData.personalInfo.summary }),
             new Paragraph({ text: '' }),
             new Paragraph({ text: 'Experience', heading: HeadingLevel.HEADING_1 }),
-            ...watchedData.experience.map(exp => 
+            ...watchedData.experience.map(exp =>
                new Paragraph({ text: `${exp.title} at ${exp.company} (${exp.startDate} - ${exp.endDate})\
 ${exp.description}` })
             )
           ],
         }],
       });
-      
+
       const blob = await Packer.toBlob(docx);
       saveAs(blob, `${watchedData.personalInfo.fullName.replace(/\s+/g, '_')}_CV.docx`);
       toast.success('SUCCESS', 'DOCX file downloaded.');
@@ -284,51 +251,11 @@ ${exp.description}` })
     }
   };
 
-  if (isMobile && !dismissMobileWarning) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center p-6 text-center">
-        <FadeIn className="max-w-md space-y-6">
-          <MonitorOff size={64} className="mx-auto text-accent-cyan opacity-20" />
-          <h1 className="text-2xl font-bold tracking-tighter uppercase">DESKTOP_RECOMMENDED</h1>
-          <p className="text-text-secondary font-mono text-sm leading-relaxed">
-            The <span className="text-accent-cyan font-bold">CV_CONSTRUCTOR</span> requires a high-resolution canvas for real-time rendering.
-            For the best experience, please access this module via a Desktop terminal.
-          </p>
-          <div className="flex flex-col gap-4 pt-4">
-             <label className="flex items-center justify-center gap-2 text-text-secondary font-mono text-xs cursor-pointer">
-               <input
-                 type="checkbox"
-                 className="accent-accent-cyan w-4 h-4"
-                 checked={hideMobileWarningOption}
-                 onChange={(e) => setHideMobileWarningOption(e.target.checked)}
-               />
-               DO NOT SHOW THIS AGAIN
-             </label>
-             <button
-                onClick={() => {
-                  if (hideMobileWarningOption) {
-                    localStorage.setItem('hide_mobile_warning', 'true');
-                  }
-                  setDismissMobileWarning(true);
-                }}
-                className="glass px-6 py-3 font-mono text-xs font-bold uppercase tracking-widest hover:text-accent-cyan border border-surface bg-white/5"
-             >
-                CONTINUE_ANYWAY
-             </button>
-             <a href="/" className="text-text-secondary hover:text-white font-mono text-[10px] underline uppercase">
-               RETURN_TO_BASE
-             </a>
-          </div>
-        </FadeIn>
-      </div>
-    );
-  }
-
   return (
     <ProtectedRoute>
-      <div className="min-h-screen flex flex-col lg:flex-row bg-background print:bg-white print:block">
-        {/* Left/Top Column: Form */}
-        <div className="lg:h-screen w-full lg:w-1/2 overflow-y-auto p-4 md:p-8 lg:p-12 border-b lg:border-b-0 lg:border-r border-surface custom-scrollbar print:hidden relative z-10 bg-background">
+      <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2 bg-background print:bg-white print:block">
+        {/* Left Column: Form */}
+        <div className="h-screen overflow-y-auto p-8 md:p-12 border-r border-surface custom-scrollbar print:hidden">
           <div className="max-w-xl mx-auto space-y-12">
             <header className="space-y-4">
               <div className="flex justify-between items-start">
@@ -368,13 +295,13 @@ ${exp.description}` })
                     INDO
                   </button>
                 </div>
-                
+
                 {/* Section Navigation Dropdown */}
                 <div className="relative md:w-64 shrink-0 group">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 text-accent-cyan pointer-events-none">
                     <Menu size={16} />
                   </div>
-                  <select 
+                  <select
                     value={step}
                     onChange={(e) => setStep(Number(e.target.value))}
                     className="w-full bg-surface border border-surface text-text-primary text-xs font-mono font-bold uppercase py-3 pl-10 pr-10 appearance-none outline-none focus:border-accent-cyan/50 hover:border-white/10 transition-colors cursor-pointer"
@@ -395,7 +322,7 @@ ${exp.description}` })
               {step === 1 && (
                 <div className="space-y-6">
                   <h2 className="text-lg font-bold font-mono tracking-widest text-accent-purple uppercase border-b border-surface pb-2">01_Personal_Identity</h2>
-                  <PhotoUpload 
+                  <PhotoUpload
                     currentPhoto={watchedData.personalInfo.photoUrl}
                     shape={watchedData.personalInfo.photoShape || 'circle'}
                     onPhotoSelected={(url) => setValue('personalInfo.photoUrl', url)}
@@ -624,9 +551,9 @@ ${exp.description}` })
           </div>
         </div>
 
-        {/* Right/Bottom Column: Preview */}
-        <div className="w-full lg:w-1/2 bg-surface p-4 md:p-12 flex justify-center overflow-auto custom-scrollbar print:p-0 print:bg-white print:block">
-          <div className="w-[210mm] min-h-[297mm] bg-white shadow-2xl origin-top transition-transform duration-500 print:shadow-none print:m-0 print:w-full print:scale-100 shrink-0 scale-[0.3] xs:scale-[0.4] sm:scale-[0.6] md:scale-75 lg:scale-[0.85] xl:scale-100 mx-auto -mb-[200mm] sm:-mb-[100mm] lg:mb-0 lg:-translate-y-4 xl:translate-y-0">
+        {/* Right Column: Preview */}
+        <div className="bg-surface p-4 md:p-12 flex justify-center overflow-auto custom-scrollbar print:p-0 print:bg-white print:block">
+          <div className="w-[210mm] min-h-[297mm] bg-white shadow-2xl origin-top transition-transform duration-500 print:shadow-none print:m-0 print:w-full print:scale-100 shrink-0 scale-[0.45] sm:scale-75 md:scale-100 lg:scale-[0.85] xl:scale-100 lg:-translate-y-4 xl:translate-y-0 -mb-[150mm] sm:-mb-[80mm] md:mb-0">
             <div id="cv-export-container" className="h-full text-black bg-white relative">
               {/* Visual A4 Page Guides (Real-time Preview) - Hidden during print/export */}
               <div className="absolute inset-0 pointer-events-none z-50 print:hidden" style={{
@@ -666,17 +593,17 @@ ${exp.description}` })
                        <div className="text-[10px] font-mono text-text-secondary mt-1">{item.date}</div>
                      </div>
                      <div className="flex gap-3">
-                       <button 
+                       <button
                          onClick={() => {
                            const newHistory = history.filter(h => h.id !== item.id);
                            setHistory(newHistory);
                            localStorage.setItem('cv_history', JSON.stringify(newHistory));
-                         }} 
+                         }}
                          className="p-2 text-text-secondary hover:text-red-500 transition-colors"
                        >
                          <Trash2 size={16} />
                        </button>
-                       <button 
+                       <button
                          onClick={() => setItemToLoad(item)}
                          className="px-4 py-1.5 font-mono text-[10px] font-bold uppercase dark:bg-white/10 bg-black/10 hover:bg-accent-cyan hover:text-white dark:hover:text-black transition-colors"
                        >
@@ -692,7 +619,7 @@ ${exp.description}` })
       )}
 
       {/* Confirmation Modal */}
-      <Modal 
+      <Modal
         visible={!!itemToLoad}
         title="OVERWRITE_WARNING"
         message={`Loading "${itemToLoad?.title}" will overwrite your current progress. Do you wish to continue?`}
@@ -703,79 +630,8 @@ ${exp.description}` })
         onCancel={() => setItemToLoad(null)}
       />
 
-      {/* Pricing Modal */}
-      {isPricingModalOpen && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm print:hidden">
-          <FadeIn className="bg-surface border border-surface w-full max-w-4xl max-h-[90vh] flex flex-col relative">
-            <div className="p-6 border-b border-surface flex justify-between items-center bg-background/50">
-               <div className="font-mono text-lg font-bold uppercase tracking-widest text-accent-cyan flex items-center gap-2">
-                 UPGRADE_ACCESS_PROTOCOL
-               </div>
-               <button onClick={() => setIsPricingModalOpen(false)} className="text-text-secondary hover:text-white"><X size={24} /></button>
-            </div>
-
-            <div className="p-8 overflow-y-auto custom-scrollbar flex-1">
-               <div className="text-center mb-8">
-                 <h2 className="text-2xl font-bold mb-2">Unlock the Full Potential of Your Career Arsenal</h2>
-                 <p className="text-text-secondary font-mono text-xs">Choose a tier that matches your deployment needs.</p>
-               </div>
-
-               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                 {/* Free Tier */}
-                 <div className="p-6 border border-surface bg-background flex flex-col">
-                    <h3 className="text-xl font-bold mb-2">FREE</h3>
-                    <div className="text-2xl font-bold text-accent-cyan mb-6">Rp 0</div>
-                    <ul className="space-y-3 font-mono text-xs text-text-secondary mb-8 flex-1">
-                      <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-accent-cyan rounded-full"></div> 2 PDF Exports / Week</li>
-                      <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-accent-cyan rounded-full"></div> Basic Templates</li>
-                      <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-accent-cyan rounded-full"></div> Watermarked PDF</li>
-                    </ul>
-                    <button className="w-full py-3 border border-surface text-text-secondary font-mono text-xs uppercase font-bold cursor-default opacity-50">
-                       CURRENT_TIER
-                    </button>
-                 </div>
-
-                 {/* Student Tier */}
-                 <div className="p-6 border border-accent-purple bg-accent-purple/5 flex flex-col relative">
-                    <div className="absolute top-0 right-0 bg-accent-purple text-white text-[9px] font-bold px-2 py-1 uppercase font-mono">Popular</div>
-                    <h3 className="text-xl font-bold mb-2 text-accent-purple">STUDENT</h3>
-                    <div className="text-2xl font-bold text-white mb-6">Rp 49.000 <span className="text-sm text-text-secondary font-normal">/mo</span></div>
-                    <ul className="space-y-3 font-mono text-xs text-text-secondary mb-8 flex-1">
-                      <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-accent-purple rounded-full"></div> 10 PDF Exports / Month</li>
-                      <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-accent-purple rounded-full"></div> All ATS & Modern Templates</li>
-                      <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-accent-purple rounded-full"></div> No Watermark</li>
-                    </ul>
-                    <button className="w-full py-3 bg-accent-purple text-white font-mono text-xs uppercase font-bold hover:bg-accent-purple/90 transition-colors">
-                       UPGRADE_VIA_QRIS
-                    </button>
-                 </div>
-
-                 {/* Pro Tier */}
-                 <div className="p-6 border border-accent-cyan bg-accent-cyan/5 flex flex-col">
-                    <h3 className="text-xl font-bold mb-2 text-accent-cyan">PRO_USER</h3>
-                    <div className="text-2xl font-bold text-white mb-6">Rp 99.000 <span className="text-sm text-text-secondary font-normal">/mo</span></div>
-                    <ul className="space-y-3 font-mono text-xs text-text-secondary mb-8 flex-1">
-                      <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-accent-cyan rounded-full"></div> Unlimited PDF Exports</li>
-                      <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-accent-cyan rounded-full"></div> DOCX / Word Export Access</li>
-                      <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-accent-cyan rounded-full"></div> Priority Support</li>
-                      <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-accent-cyan rounded-full"></div> Custom Theming</li>
-                    </ul>
-                    <button className="w-full py-3 bg-accent-cyan text-black font-mono text-xs uppercase font-bold hover:bg-accent-cyan/90 transition-colors">
-                       UPGRADE_VIA_MIDTRANS
-                    </button>
-                 </div>
-               </div>
-
-               <div className="mt-8 text-center text-[10px] font-mono text-text-secondary">
-                 Payments are securely processed via Midtrans and QRIS network.
-               </div>
-            </div>
-          </FadeIn>
-        </div>
-      )}
-
       {/* ATS Scan Modal */}
-      <ATSCheckerModal 
+      <ATSCheckerModal
         isOpen={isATSOpen}
         onClose={() => setIsATSOpen(false)}
         data={watchedData}
@@ -785,23 +641,23 @@ ${exp.description}` })
         /* Web-safe ATS Typography & Print Enhancements */
         @media print {
           body { background: white !important; color: black !important; }
-          
+
           /* Hide all UI elements entirely during print, but NEVER hide valid headers in the document */
           .print\:hidden { display: none !important; }
           nav, button, footer, .ui-controls { display: none !important; }
-          
+
           /* Strict A4 page size format with normalized ATS margins */
           @page { size: A4; margin: 10mm; }
-          
+
           * { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; box-shadow: none !important; }
-          
+
           /* Orphan/Widow Control - Prevents sections from breaking in half */
           .cv-print-block, .experience-item, .education-item {
             page-break-inside: avoid !important;
             break-inside: avoid !important;
             display: block !important;
           }
-          
+
           /* Dynamic Scale Approach / Compression */
           .cv-print-container {
             /* Compresses content slightly if it exceeds one page */
