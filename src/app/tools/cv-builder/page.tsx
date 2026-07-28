@@ -142,63 +142,73 @@ export default function CVBuilderPage() {
 
   const handlePrint = async () => {
     if (!user || !profile) {
-      toast.error('AUTH_REQUIRED', 'Please login to export to PDF.');
+      toast.error('AUTH_REQUIRED', 'Access Denied: Please login to export your CV.');
       return;
     }
+
     const isPro = profile.role === 'super_admin' || profile.role === 'family';
+    let pdfExportCount = 0;
     
     if (!isPro) {
-      const userRef = doc(db, 'users', user.uid);
-      const userSnap = await getDoc(userRef);
-      let pdfExportCount = 0;
-      if (userSnap.exists()) {
-        pdfExportCount = userSnap.data().pdfExportCount || 0;
+      try {
+        const userRef = doc(db, 'users', user.uid);
+        const userSnap = await getDoc(userRef);
 
-        // Simulasikan pengecekan kuota mingguan (>= 2)
-        if (pdfExportCount >= 2) {
-          setIsPricingModalOpen(true);
-          toast.error('QUOTA_EXCEEDED', 'You have reached the maximum PDF exports. Upgrade your plan.');
-          return;
+        if (userSnap.exists()) {
+          pdfExportCount = userSnap.data().pdfExportCount || 0;
+
+          if (pdfExportCount >= 2) {
+            setIsPricingModalOpen(true);
+            toast.error('QUOTA_EXCEEDED', 'Export limit reached. Please upgrade to Pro for unlimited exports.');
+            return;
+          }
         }
+      } catch (error) {
+         console.error('Error checking quota:', error);
+         toast.error('NETWORK_ERROR', 'Failed to verify export quota. Please try again.');
+         return;
       }
-      await setDoc(userRef, { pdfExportCount: pdfExportCount + 1, lastPdfExportDate: Date.now() }, { merge: true });
     }
 
+    // Prepare History & Draft Data
     const newItem: CVHistoryItem = {
       id: Date.now().toString(),
       date: new Date().toLocaleString(),
       title: watchedData.personalInfo.fullName + " - " + watchedData.personalInfo.title,
       data: watchedData
     };
+
     const updatedHistory = [newItem, ...history].slice(0, 20);
     setHistory(updatedHistory);
     localStorage.setItem('cv_history', JSON.stringify(updatedHistory));
     
+    // Save draft to cloud (non-blocking for print if fails)
     try {
       const draftRef = doc(collection(db, `users/${user.uid}/cv_drafts`), newItem.id);
       await setDoc(draftRef, newItem);
-      toast.success('CLOUD_SYNC', 'Draft saved securely to the Vault.');
+      toast.success('CLOUD_SYNC', 'Draft synced securely to the Vault.');
     } catch (e) {
-      console.error('Save error', e);
+      console.error('Save draft error:', e);
     }
     
-    toast.success("PROCESSING", "Generating PDF natively...");
+    toast.success("PROCESSING", "Initiating native PDF generation...");
     
     try {
       const element = document.getElementById('cv-export-container');
-      if (!element) return;
+      if (!element) {
+        toast.error("ERROR", "Canvas container not found. Cannot render PDF.");
+        return;
+      }
       
       const html2pdf = (await import('html2pdf.js')).default;
 
-      // Naming Convention: "[Nama User] - [Jabatan Terakhir] - [DD MM YYYY] - made by is.arwan.vercel.app (CV and Portofolio showcase Profesional)"
+      // Naming Convention
       const userName = watchedData.personalInfo.fullName?.trim() || "Untitled";
       const userJob = watchedData.personalInfo.title?.trim() || "Role";
       const date = new Date();
       const formattedDate = `${String(date.getDate()).padStart(2, '0')} ${String(date.getMonth() + 1).padStart(2, '0')} ${date.getFullYear()}`;
-
       const filename = `${userName} - ${userJob} - ${formattedDate} - made by is.arwan.vercel.app (CV and Portofolio showcase Profesional).pdf`;
 
-      // Simpan document.title asli, set title baru untuk print
       const originalTitle = document.title;
       document.title = filename.replace('.pdf', '');
 
@@ -213,10 +223,21 @@ export default function CVBuilderPage() {
       
       await html2pdf().set(opt).from(element).save();
       document.title = originalTitle;
-      toast.success("SUCCESS", "PDF Downloaded.");
+
+      // DECREMENT QUOTA ONLY AFTER SUCCESSFUL EXPORT
+      if (!isPro) {
+         try {
+            const userRef = doc(db, 'users', user.uid);
+            await setDoc(userRef, { pdfExportCount: pdfExportCount + 1, lastPdfExportDate: Date.now() }, { merge: true });
+         } catch (quotaError) {
+            console.error('Failed to update quota post-export:', quotaError);
+         }
+      }
+
+      toast.success("SUCCESS", "PDF export completed successfully.");
     } catch (error) {
-      console.error(error);
-      toast.error("ERROR", "Failed to generate PDF");
+      console.error("PDF Generation failed:", error);
+      toast.error("ERROR", "Failed to generate PDF. Layout integrity may be compromised.");
     }
   };
 
@@ -376,7 +397,14 @@ ${exp.description}` })
                   </div>
                   <select 
                     value={step}
-                    onChange={(e) => setStep(Number(e.target.value))}
+                    onChange={(e) => {
+                       const nextStep = Number(e.target.value);
+                       if (step === 1 && nextStep > 1 && !watchedData.personalInfo.fullName?.trim()) {
+                         toast.error("VALIDATION_ERROR", "Full Name is required before proceeding to the next sequence.");
+                         return;
+                       }
+                       setStep(nextStep);
+                    }}
                     className="w-full bg-surface border border-surface text-text-primary text-xs font-mono font-bold uppercase py-3 pl-10 pr-10 appearance-none outline-none focus:border-accent-cyan/50 hover:border-white/10 transition-colors cursor-pointer"
                   >
                     {SECTIONS.map(s => (
@@ -598,7 +626,13 @@ ${exp.description}` })
                 {step < 7 ? (
                   <button
                     type="button"
-                    onClick={() => setStep(step + 1)}
+                    onClick={() => {
+                       if (step === 1 && !watchedData.personalInfo.fullName?.trim()) {
+                         toast.error("VALIDATION_ERROR", "Full Name is required before proceeding to the next sequence.");
+                         return;
+                       }
+                       setStep(step + 1);
+                    }}
                     className="flex items-center gap-2 font-mono text-[10px] font-bold uppercase text-accent-cyan hover:underline"
                   >
                     NEXT_MODULE <ChevronRight size={14} />
