@@ -30,3 +30,6 @@ next-optimized-images ❯ If this is on purpose and you don't want this plugin t
 Firebase API Key is missing. Check your .env file.
  ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
  GET /tools/cv-builder 200 in 13376ms
+ ✓ Compiled in 6.3s (1789 modules)
+ ✓ Compiled in 1309ms (1789 modules)
+ ✓ Compiled in 999ms (1789 modules)
