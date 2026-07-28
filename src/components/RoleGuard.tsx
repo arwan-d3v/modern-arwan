@@ -4,6 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 import { UserRole } from "@/types";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useToast } from "@/context/ToastContext";
 import StatusOverlay from "@/components/ui/StatusOverlay";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -15,6 +16,7 @@ interface RoleGuardProps {
 export default function RoleGuard({ children, allowedRoles }: RoleGuardProps) {
   const { profile, loading } = useAuth();
   const router = useRouter();
+  const toast = useToast();
   const [showChildren, setShowChildren] = useState(false);
   const [showUnauthorized, setShowUnauthorized] = useState(false);
 
@@ -24,6 +26,7 @@ export default function RoleGuard({ children, allowedRoles }: RoleGuardProps) {
     if (loading) return;
 
     if (isDevBypass) {
+      toast.info('DEV_MODE', 'Bypassing auth rules');
       setTimeout(() => setShowChildren(true), 600);
       return;
     }

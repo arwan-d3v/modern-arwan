@@ -2,6 +2,7 @@ import dynamic from "next/dynamic";
 import FadeIn from "@/components/FadeIn";
 import { Server, Zap, Shield, Terminal } from "lucide-react";
 import WaitlistForm from "@/components/WaitlistForm";
+import BootSequenceWrapper from "@/components/BootSequenceWrapper";
 
 const ExperienceSection = dynamic(() => import("@/components/ExperienceSection"), { ssr: true });
 const SkillsSection = dynamic(() => import("@/components/SkillsSection"), { ssr: true });
@@ -14,7 +15,8 @@ import TestimonialSection from "@/components/TestimonialSection";
 
 export default function Home() {
   return (
-    <div className="max-w-7xl mx-auto px-6 md:px-12 py-20 space-y-32">
+    <BootSequenceWrapper>
+      <div className="max-w-7xl mx-auto px-6 md:px-12 py-20 space-y-32">
       {/* Hero Section */}
       <section className="min-h-[70vh] flex flex-col justify-center relative">
         <div className="absolute -top-40 -left-40 w-96 h-96 bg-accent-cyan/5 blur-[120px] rounded-full pointer-events-none" />
@@ -69,8 +71,7 @@ export default function Home() {
 
       {/* Showcase Section */}
       <ShowcaseSection />
-
-
-    </div>
+      </div>
+    </BootSequenceWrapper>
   );
 }

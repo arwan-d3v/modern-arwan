@@ -49,19 +49,31 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const timersRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
+  const activeToastsRef = useRef<Set<string>>(new Set());
+
   const dismiss = useCallback((id: string) => {
     const timer = timersRef.current.get(id);
     if (timer) {
       clearTimeout(timer);
       timersRef.current.delete(id);
     }
-    setToasts(prev => prev.filter(t => t.id !== id));
+    setToasts(prev => {
+      const remaining = prev.filter(t => t.id !== id);
+      activeToastsRef.current.clear();
+      remaining.forEach(t => activeToastsRef.current.add(`${t.title}|${t.message}`));
+      return remaining;
+    });
   }, []);
 
   const toast = useCallback((options: Omit<Toast, "id">): string => {
+    const key = `${options.title}|${options.message}`;
+    if (activeToastsRef.current.has(key)) return "";
+
     const id = `toast-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
     const duration = options.duration ?? 4000;
     const newToast: Toast = { ...options, id, duration };
+
+    activeToastsRef.current.add(key);
 
     setToasts(prev => {
       const next = [newToast, ...prev].slice(0, 5); // max 5 toasts

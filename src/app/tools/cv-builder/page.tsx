@@ -426,7 +426,7 @@ ${exp.description}` })
             </header>
 
             {/* Stepper Content */}
-            <div className="space-y-8 animate-in fade-in slide-in-from-left-4 duration-500">
+            <div className="space-y-8 animate-in fade-in slide-in-from-left-4 duration-500 pb-28 lg:pb-0">
               {step === 1 && (
                 <div className="space-y-6">
                   <h2 className="text-lg font-bold font-mono tracking-widest text-accent-purple uppercase border-b border-surface pb-2">01_Personal_Identity</h2>
@@ -621,7 +621,7 @@ ${exp.description}` })
                 </div>
               )}
 
-              <div className="flex justify-between pt-8 border-t border-surface">
+              <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/95 backdrop-blur-xl border-t border-surface z-50 flex justify-between lg:static lg:bg-transparent lg:border-t lg:p-0 lg:pt-8 lg:mt-0">
                 <button
                   disabled={step === 1}
                   type="button"

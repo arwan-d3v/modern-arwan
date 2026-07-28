@@ -7,12 +7,41 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
 import { usePathname } from "next/navigation";
 import DarkModeToggle from "@/components/DarkModeToggle";
+import StatusOverlay from "@/components/ui/StatusOverlay";
+import { useToast } from "@/context/ToastContext";
 
 export default function Navbar() {
   const { profile, logout } = useAuth();
   const pathname = usePathname();
+  const { warning, success } = useToast();
   const [menuOpen, setMenuOpen] = React.useState(false);
+  const [isLoggingOut, setIsLoggingOut] = React.useState(false);
   const isSuperUser = profile?.role === 'super_admin';
+
+  React.useEffect(() => {
+    const handleOffline = () => {
+      warning('OFFLINE', 'Network disconnected. Cloud Sync paused.');
+    };
+    const handleOnline = () => {
+      success('ONLINE', 'Network connection restored.');
+    };
+
+    window.addEventListener('offline', handleOffline);
+    window.addEventListener('online', handleOnline);
+
+    return () => {
+      window.removeEventListener('offline', handleOffline);
+      window.removeEventListener('online', handleOnline);
+    };
+  }, [warning, success]);
+
+  const handleLogout = () => {
+    setIsLoggingOut(true);
+    setTimeout(async () => {
+      await logout();
+      setIsLoggingOut(false);
+    }, 1200);
+  };
 
   return (
     <>
@@ -97,7 +126,7 @@ export default function Navbar() {
                 <Link href="/profile" className="px-4 py-2 text-xs font-mono text-text-secondary hover:text-accent-cyan dark:hover:bg-white/5 hover:bg-black/5 transition-colors">
                   My Profile
                 </Link>
-                <button onClick={() => logout()} className="w-full text-left px-4 py-2 text-xs font-mono text-text-secondary hover:text-red-400 dark:hover:bg-white/5 hover:bg-black/5 transition-colors">
+                <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-xs font-mono text-text-secondary hover:text-red-400 dark:hover:bg-white/5 hover:bg-black/5 transition-colors">
                   Logout
                 </button>
               </div>
@@ -179,6 +208,13 @@ export default function Navbar() {
         </>
       )}
     </AnimatePresence>
+
+    <StatusOverlay 
+      mode="waiting" 
+      title="TERMINATING SECURE SESSION" 
+      message="Disconnecting and clearing local cache..." 
+      visible={isLoggingOut} 
+    />
     </>
   );
 }
