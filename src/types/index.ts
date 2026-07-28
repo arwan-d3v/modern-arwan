@@ -1,6 +1,6 @@
 import { Timestamp, FieldValue } from "firebase/firestore";
 
-export type UserRole = 'super_admin' | 'family' | 'guest' | 'public';
+export type UserRole = 'super_admin' | 'family' | 'pro' | 'guest' | 'public';
 
 export interface UserProfile {
   uid: string;

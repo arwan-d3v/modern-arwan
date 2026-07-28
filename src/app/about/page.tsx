@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Terminal, Code, Cpu, Globe } from "lucide-react";
+import { Terminal, Code, Cpu, Globe, FileText } from "lucide-react";
+import Link from "next/link";
 
 export default function AboutPage() {
   return (
@@ -15,12 +16,12 @@ export default function AboutPage() {
           <h1 className="text-4xl md:text-5xl font-bold font-mono text-accent-cyan uppercase tracking-tighter">
             &gt; SYSTEM_ADMIN_LOG
           </h1>
-          <a 
-            href="#" 
+          <Link 
+            href="/tools/cv-builder" 
             className="inline-flex items-center gap-2 px-6 py-3 bg-white/5 border border-accent-cyan/30 text-accent-cyan font-mono text-sm font-bold uppercase tracking-widest hover:bg-accent-cyan hover:text-black transition-colors"
           >
-            <Terminal size={16} /> Download CV
-          </a>
+            <FileText size={16} /> Build / Download CV
+          </Link>
         </div>
         
         <div className="glass p-8 md:p-10 rounded-xl border border-white/10 mb-12 relative overflow-hidden">

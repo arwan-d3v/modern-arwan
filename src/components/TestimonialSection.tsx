@@ -3,6 +3,7 @@
 import React from "react";
 import FadeIn from "@/components/FadeIn";
 import { Quote } from "lucide-react";
+import Link from "next/link";
 
 interface Testimonial {
   id: string;
@@ -80,6 +81,16 @@ export default function TestimonialSection() {
           </FadeIn>
         ))}
       </div>
+
+      {/* CTA */}
+      <FadeIn delay={0.5} className="text-center mt-10 relative z-10">
+        <Link
+          href="/testimonials"
+          className="inline-flex items-center gap-2 px-6 py-3 glass border border-accent-purple/20 hover:border-accent-purple text-text-secondary hover:text-accent-purple text-xs font-mono font-bold uppercase tracking-widest transition-colors"
+        >
+          See All Reviews →
+        </Link>
+      </FadeIn>
     </section>
   );
 }

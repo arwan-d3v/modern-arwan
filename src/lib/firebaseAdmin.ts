@@ -49,4 +49,15 @@ if (!admin.apps.length) {
 }
 
 const db = getDatabase();
-export { admin, db };
+
+// Lazy Firestore getter — returns null if admin not properly initialized
+function adminDb() {
+  try {
+    const { getFirestore } = require('firebase-admin/firestore');
+    return getFirestore();
+  } catch {
+    return null;
+  }
+}
+
+export { admin, db, adminDb };

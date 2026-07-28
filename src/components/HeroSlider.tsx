@@ -2,29 +2,39 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Monitor, Layout, Server, Sparkles } from "lucide-react";
+import { ChevronLeft, ChevronRight, FileText, LayoutDashboard, Globe } from "lucide-react";
+import Image from "next/image";
 
 const slides = [
   {
     id: 1,
-    title: "Premium UI/UX",
-    subtitle: "Modern aesthetics, glassmorphism, and micro-animations designed to captivate.",
-    icon: <Sparkles size={48} className="text-accent-cyan mb-4" />,
-    color: "from-accent-cyan/20 to-black/80"
+    title: "ATS CV Builder",
+    subtitle: "Smart resume builder with real-time preview, ATS optimization, and intelligent page breaks.",
+    image: "/images/hero-cv-builder.png",
+    icon: <FileText size={20} className="text-accent-cyan" />,
+    accent: "cyan",
+    tag: "TOOL_CV_CONSTRUCTOR",
+    gradient: "from-accent-cyan/30 via-black/60 to-black/90"
   },
   {
     id: 2,
-    title: "Frontend Mastery",
-    subtitle: "Building responsive, highly interactive web applications using Next.js and React.",
-    icon: <Layout size={48} className="text-accent-purple mb-4" />,
-    color: "from-accent-purple/20 to-black/80"
+    title: "Command Center",
+    subtitle: "Real-time system dashboard with VPS metrics, live terminal logs, and RBAC access control.",
+    image: "/images/hero-dashboard.png",
+    icon: <LayoutDashboard size={20} className="text-emerald-400" />,
+    accent: "emerald",
+    tag: "TOOL_COMMAND_CENTER",
+    gradient: "from-emerald-500/30 via-black/60 to-black/90"
   },
   {
     id: 3,
-    title: "System Architecture",
-    subtitle: "Designing scalable backend services, APIs, and cloud infrastructure.",
-    icon: <Server size={48} className="text-emerald-400 mb-4" />,
-    color: "from-emerald-400/20 to-black/80"
+    title: "Portfolio Vault",
+    subtitle: "Dynamic project showcase, skill matrix, and professional experience — all CMS-driven.",
+    image: "/images/hero-portfolio.png",
+    icon: <Globe size={20} className="text-accent-purple" />,
+    accent: "purple",
+    tag: "TOOL_PORTFOLIO",
+    gradient: "from-accent-purple/30 via-black/60 to-black/90"
   }
 ];
 
@@ -65,7 +75,7 @@ export default function HeroSlider() {
   };
 
   return (
-    <div className="relative w-full h-[300px] md:h-[400px] rounded-2xl overflow-hidden glass border border-white/10 group mb-12">
+    <div className="relative w-full h-[300px] md:h-[420px] overflow-hidden border border-white/10 group mb-12">
       <AnimatePresence initial={false} custom={direction}>
         <motion.div
           key={current}
@@ -89,28 +99,49 @@ export default function HeroSlider() {
               prevSlide();
             }
           }}
-          className={`absolute inset-0 flex flex-col items-center justify-center p-8 bg-gradient-to-br ${slides[current].color} backdrop-blur-md`}
+          className="absolute inset-0"
         >
-          {slides[current].icon}
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-4 text-center tracking-tight">
-            {slides[current].title}
-          </h2>
-          <p className="text-sm md:text-lg text-gray-300 font-mono text-center max-w-2xl">
-            {slides[current].subtitle}
-          </p>
+          {/* Background Image */}
+          <Image
+            src={slides[current].image}
+            alt={slides[current].title}
+            fill
+            className="object-cover object-top opacity-70 group-hover:opacity-80 transition-opacity duration-700 scale-105 group-hover:scale-100"
+            style={{ transition: 'opacity 0.7s, transform 0.7s' }}
+            unoptimized
+          />
+          {/* Gradient Overlay */}
+          <div className={`absolute inset-0 bg-gradient-to-t ${slides[current].gradient}`} />
+
+          {/* Content */}
+          <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-10">
+            {/* Tag */}
+            <div className="flex items-center gap-2 mb-3">
+              {slides[current].icon}
+              <span className="font-mono text-[10px] font-bold tracking-[0.3em] uppercase text-white/60">
+                {slides[current].tag}
+              </span>
+            </div>
+            <h2 className="text-2xl md:text-4xl font-bold text-white tracking-tight mb-2">
+              {slides[current].title}
+            </h2>
+            <p className="text-sm text-gray-300 font-mono max-w-xl leading-relaxed">
+              {slides[current].subtitle}
+            </p>
+          </div>
         </motion.div>
       </AnimatePresence>
 
       <button
         onClick={prevSlide}
-        className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 border border-white/10 text-white hover:bg-white/10 hover:border-accent-cyan transition-colors opacity-0 group-hover:opacity-100 z-10"
+        className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-black/50 border border-white/10 text-white hover:bg-white/10 hover:border-accent-cyan transition-colors opacity-0 group-hover:opacity-100 z-10"
         aria-label="Previous Slide"
       >
         <ChevronLeft size={24} />
       </button>
       <button
         onClick={nextSlide}
-        className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 border border-white/10 text-white hover:bg-white/10 hover:border-accent-cyan transition-colors opacity-0 group-hover:opacity-100 z-10"
+        className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-black/50 border border-white/10 text-white hover:bg-white/10 hover:border-accent-cyan transition-colors opacity-0 group-hover:opacity-100 z-10"
         aria-label="Next Slide"
       >
         <ChevronRight size={24} />
@@ -124,8 +155,8 @@ export default function HeroSlider() {
               setDirection(index > current ? 1 : -1);
               setCurrent(index);
             }}
-            className={`w-2 h-2 rounded-full transition-all ${
-              index === current ? "bg-accent-cyan w-6" : "bg-white/30 hover:bg-white/50"
+            className={`h-1 transition-all duration-300 ${
+              index === current ? "bg-accent-cyan w-8" : "bg-white/30 hover:bg-white/50 w-2"
             }`}
             aria-label={`Go to slide ${index + 1}`}
           />

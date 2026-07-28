@@ -16,9 +16,33 @@ export default function SkillsSection() {
       setSkills([
         {
           id: "1",
-          category: "CORE_SYSTEMS",
-          skills: ["React", "Next.js", "TypeScript", "Node.js"],
+          category: "FIELD_OPERATIONS",
+          skills: ["HSE & Working at Heights", "LOTO Clearance", "Field Network Installations", "VHF/UHF Radio Systems", "Remote Site Deployment", "Full Pit Access Permit"],
           order: 1
+        },
+        {
+          id: "2",
+          category: "NETWORK_INFRASTRUCTURE",
+          skills: ["MikroTik Configuration", "Rajant Mesh Networks", "Cisco Networking", "WAP Deployment", "LTE/WAN Topology", "BTS Infrastructure", "Wireshark"],
+          order: 2
+        },
+        {
+          id: "3",
+          category: "SOFTWARE_DEV",
+          skills: ["React", "Next.js", "Node.js", "Python", "Flask", "Firebase", "Supabase", "MQL5/C++", "TypeScript"],
+          order: 3
+        },
+        {
+          id: "4",
+          category: "FMS_SYSTEMS",
+          skills: ["MineCare", "Modular Dispatch", "Provisions Drill", "Fleet Telemetry", "Real-time Monitoring"],
+          order: 4
+        },
+        {
+          id: "5",
+          category: "PRODUCTIVITY_TOOLS",
+          skills: ["CISCO Packet Tracer", "MS Office Suite", "Visio", "Primavera P6", "Git", "GitHub"],
+          order: 5
         }
       ]);
       setLoading(false);

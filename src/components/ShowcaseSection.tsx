@@ -112,7 +112,7 @@ function ProjectCard({ project, onClick }: { project: ShowcaseProject, onClick: 
     >
       <div className="aspect-video w-full bg-black/40 overflow-hidden mb-6 border border-surface relative">
         {displayImage ? (
-           <Image src={displayImage} alt={project.title} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" width={600} height={400} unoptimized />
+           <Image src={displayImage} alt={project.title} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" width={600} height={400} />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <Box size={48} className="text-surface" />
@@ -127,7 +127,18 @@ function ProjectCard({ project, onClick }: { project: ShowcaseProject, onClick: 
             {project.title}
           </h3>
           <div className="flex gap-3 text-text-secondary">
-            <ExternalLink size={18} className="hover:text-white" />
+            {project.live_link && project.live_link !== '#' && (
+              <a
+                href={project.live_link}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="hover:text-accent-cyan transition-colors p-1 hover:bg-white/5"
+                title="View Live Project"
+              >
+                <ExternalLink size={18} />
+              </a>
+            )}
           </div>
         </div>
 
