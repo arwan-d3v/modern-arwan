@@ -36,12 +36,12 @@ export default function RoleGuard({ children, allowedRoles }: RoleGuardProps) {
       return;
     }
 
-    if (allowedRoles.includes(profile.role as UserRole)) {
+    if (profile && allowedRoles.includes(profile!.role as UserRole)) {
       setTimeout(() => setShowChildren(true), 500);
     } else {
       setShowUnauthorized(true);
     }
-  }, [profile, loading, router, allowedRoles, isDevBypass]);
+  }, [profile, loading, router, allowedRoles, isDevBypass, toast]);
 
   const handleRequestElevation = () => {
     setShowUnauthorized(false);
