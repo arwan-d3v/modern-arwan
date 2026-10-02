@@ -18,45 +18,94 @@ export interface BasePreviewProps {
 
 const DEFAULT_DATA_ATS: CVData = {
   personalInfo: {
-    fullName: "Jerome Powel",
-    email: "jerome.powel@finance.gov",
-    phone: "+1 202 555 0199",
-    location: "Washington, D.C.",
-    title: "Chief Economic Officer",
-    summary: "Senior economic strategist with extensive experience in monetary policy and financial system stability. Proven track record in analyzing complex economic indicators and leading large-scale financial interventions.",
-    photoShape: 'circle',
+    fullName: "ARWAN",
+    email: "arwanarwan12@gmail.com",
+    phone: "+62 852 4013 5915",
+    location: "East Kutai, Indonesia 75683",
+    title: "Field Network & FMS Technician",
+    summary: "Field Professional with about 10 years of intensive experience in extreme mining environments. Unique hybrid background bridging heavy machinery mechanics (Vocational Grad, 2015) and advanced Information Technology (B.Sc. IT, 2022-2026). Expert in designing, deploying, and troubleshooting wired and wireless communication networks, including isolated WAN and LTE topologies for Fleet Management systems. Highly trained in strict mining safety procedures (LOTO, Working at Heights, Full Pit Access Holding Permit), ensuring minimum-downtime remote and onsite support during critical project rollouts.",
+    photoShape: 'square',
   },
   experience: [
     {
-      title: "Chairman",
-      company: "Federal Reserve",
-      location: "Washington, D.C.",
-      startDate: "2018",
+      title: "Field Network & FMS Technician",
+      company: "PT. MULTI KONTROL NUSANTARA",
+      location: "Sangatta, Indonesia",
+      startDate: "01/2024",
       endDate: "Present",
-      description: "Directed national monetary policy to promote maximum employment and stable prices.\nManaged the central banking system of the United States through various economic cycles.",
+      description: "• **Installation** efficiently on repeater BTS/TBTS two-way radios, backbone link, CCTV, and dispatch FMS units on heavy equipment according to specifications, ensuring proper wiring, connections, and testing post-installation for optimal functionality.\n• **Preventive Maintenance** checks to identify and address potential issues proactively, performing regular inspections and cleaning of equipment components to maintain peak performance.\n• **Troubleshooting and Repair** techniques and diagnostic tools to identify and resolve technical problems promptly, executing repairs efficiently by replacing faulty components and making necessary adjustments.\n• **Customer Support** to provide timely technical support and assistance to customers, addressing inquiries and resolving issues courteously, while offering guidance and training on equipment usage and maintenance to maximize customer satisfaction."
+    },
+    {
+      title: "IT Support Engineer",
+      company: "PT. BUDHI WIGUNA PRIMA",
+      location: "Sangatta, Indonesia",
+      startDate: "08/2020",
+      endDate: "12/2023",
+      description: "• **Technical Support** providing technical assistance to end-users for hardware, software, and network-related issues. Troubleshooting problems and resolving them in a timely manner.\n• **Hardware and Software Maintenance** Installing, configuring, and maintaining computer hardware and software. Performing routine maintenance tasks, such as updates and patches.\n• **Network Support** assisting with the setup and maintenance of the company's network infrastructure. Developed and implemented extensive LAN designs to connect up to 25+ users on network.\n• **Monitoring** system performance and addressing any issues to ensure optimal functionality. Implementing monitoring tools to identify potential problems proactively.\n• **CCTV Maintenance** Built and maintained strong working relationships with other CCTV Technicians, supporting each other with more complex repairs."
+    },
+    {
+      title: "Maintenance Planner",
+      company: "PT. BUDHI WIGUNA PRIMA",
+      location: "Sangatta, Indonesia",
+      startDate: "08/2018",
+      endDate: "Present",
+      description: "• **Delivered continuous improvement** strategies, process optimization approaches, and operational engineering support to the management team.\n• **Standardized processes** for installing, commissioning, and maintaining industrial equipment.\n• **Planned and organized** repairs for faulty production equipment repairs, independently fixing minor problems.\n• **Coordinated** delivery schedules and labor plans to set up plant equipment.\n• **Prepared reports** detailing data analysis and prospective solutions, benefits and costs."
+    },
+    {
+      title: "Mechanical Technician",
+      company: "PT. THIESS CONTRACTOR INDONESIA",
+      location: "Sangatta, Indonesia",
+      startDate: "10/2017",
+      endDate: "04/2018",
+      description: "• **Regular maintenance and inspections** on excavators, small diggers, dewatering pump sets, and rotary drilling equipment.\n• **Diagnosed and troubleshot** mechanical issues with the equipment, performing repairs and replacements of faulty components.\n• **Scheduled servicing plans** for each type of equipment, changing fluids and filters as part of routine servicing."
+    },
+    {
+      title: "Electricity Generation Plant Operator",
+      company: "PT. SUMBERDAYA SEWATAMA",
+      location: "Sangatta, Indonesia",
+      startDate: "06/2015",
+      endDate: "10/2017",
+      description: "• **Read engineering drawings and diagrams** to understand equipment's power requirements.\n• **Monitored plant operations** by taking readings from charts, meters, and gauges at predetermined intervals.\n• **Distributed electrical power** from production plants over electrical grids to electricity distribution stations.\n• **Performed pre-start checks** to identify mechanical and safety issues, executing fixes to resolve identified problems."
     }
   ],
   education: [
     {
-      degree: "Juris Doctor",
-      school: "Georgetown University",
-      year: "1979",
+      degree: "B.Sc. Information Technology",
+      school: "Cyber Asia University South Jakarta",
+      year: "Jun, 2026",
+    },
+    {
+      degree: "Vocational High School - Heavy Equipment",
+      school: "SMK Muh 1 Sangatta Utara, Indonesia",
+      year: "May, 2015",
     }
   ],
   skills: [
-    { name: "Monetary Policy", level: 98 },
-    { name: "Financial Analysis", level: 95 },
-    { name: "Strategic Leadership", level: 90 },
+    { name: "Field Network Installations & Hardware", level: 95 },
+    { name: "FMS Integration & Maintenance", level: 95 },
+    { name: "Software Dev & Network Automation (Python, Flask, React)", level: 85 },
+    { name: "MS Office Suite & Visio", level: 90 },
+    { name: "CISCO Packet Tracer & Wireshark", level: 90 },
+    { name: "HSE & Working at Heights", level: 100 },
   ],
   projects: [
-    { title: "Quantitative Easing Program", description: "Implemented emergency liquidity measures to stabilize markets.", techStack: "Macroeconomics, Policy Design" }
+    { title: "Mastercard Cybersecurity Job Simulation", description: "Actively participated in a comprehensive job simulation focused on cybersecurity. Key highlights include engagement in real-world scenarios, incident response, implementation of security protocols, collaborative teamwork, and showcasing adaptability in diverse cybersecurity challenges.", techStack: "Incident Response, Network Security" },
+    { title: "Dynamic Online Resume Platform", description: "Developed a dynamic online resume platform, leveraging programming languages to enhance user experience and showcase digitalization technology skills.", techStack: "HTML, CSS, JavaScript, Python" },
+    { title: "KRX Monitoring & Automation Dashboard", description: "Engineered a decentralized, real-time telemetry and automation dashboard featuring seamless Firebase Cloud synchronization. Built complex data pipelines to visualize live metrics, active system nodes, and automated processes, demonstrating high-level system integration capabilities.", link: "krx-dgc.vercel.app", techStack: "React, Python, MQL5 (C++), Firebase" },
+    { title: "Dynamic CV & Portfolio CMS", description: "Developed and deployed a custom Content Management System (CMS) for dynamic resume generation.", link: "is-arwan.vercel.app", techStack: "React, Node.js, Firebase" },
+    { title: "KosKosanKu - Property Management & Booking Platform", description: "Developed and deployed a full-stack web application featuring user authentication, geolocation-based routing, and transaction management.", link: "koskosanku.vercel.app", techStack: "React, Node.js, Cloud Supabase" }
   ],
   certifications: [
-    { name: "Certified Financial Analyst (CFA)", issuer: "CFA Institute", year: "1985" }
+    { name: "Fundamentals Network Computer", issuer: "ID-Networkers", year: "Oct, 2023", link: "https://www.idn.id/" },
+    { name: "Introduction to Information Security Course", issuer: "CYBER ACADEMY", year: "Oct, 2023", link: "https://www.cyberacademy.id/" },
+    { name: "Certified Of Fundamental Cyber Security", issuer: "CODING STUDIO", year: "2023" },
+    { name: "Primavera P6 Professional Project Management", issuer: "Oracle Academy", year: "Feb, 2025", link: "https://academy.oracle.com/" },
+    { name: "Basic Radio Awareness", issuer: "Tait Radio Academy", year: "Sept, 2025", link: "https://www.taitradioacademy.com/" },
+    { name: "Rajant Kinetic Mesh", issuer: "Rajant x PT. Multi Kontrol Nusantara", year: "Jul, 2025", link: "https://rajant.com/" }
   ],
   languages: [
-    { name: "English", proficiency: "Native" },
-    { name: "Spanish", proficiency: "Professional" }
+    { name: "Indonesian", proficiency: "Native" },
+    { name: "English", proficiency: "CEFR B1 - B2" }
   ],
   references: [],
 };
@@ -196,16 +245,16 @@ function ATSPreview({ data }: { data: CVData }) {
         </div>
       </header>
 
-      <section className="cv-print-block space-y-2">
-        <h2 className="text-[11pt] font-bold uppercase border-b border-black">Summary</h2>
+      <section className="cv-print-block space-y-2 print:break-inside-avoid">
+        <h2 className="text-[11pt] font-bold uppercase border-b-[1px] border-black pb-1 mb-2">Summary</h2>
         <p className="text-justify">{formatText(data.personalInfo.summary)}</p>
       </section>
 
-      <section className="space-y-3">
-        <h2 className="text-[11pt] font-bold uppercase border-b border-black">Work Experience</h2>
+      <section className="space-y-3 print:break-inside-avoid print:break-before-auto">
+        <h2 className="text-[11pt] font-bold uppercase border-b-[1px] border-black pb-1 mb-2">Work Experience</h2>
         <div className="space-y-4">
           {data.experience.map((exp, i) => (
-            <article key={i} className="cv-print-block experience-item">
+            <article key={i} className="cv-print-block experience-item print:break-inside-avoid">
               <header className="flex justify-between font-bold" style={{ display: 'flex' }}>
                 <h3>{exp.title}</h3>
                 <span>{exp.startDate} – {exp.endDate}</span>
@@ -220,15 +269,15 @@ function ATSPreview({ data }: { data: CVData }) {
         </div>
       </section>
 
-      <section className="cv-print-block space-y-2">
-        <h2 className="text-[11pt] font-bold uppercase border-b border-black">Technical Skills</h2>
+      <section className="cv-print-block space-y-2 print:break-inside-avoid">
+        <h2 className="text-[11pt] font-bold uppercase border-b-[1px] border-black pb-1 mb-2">Technical Skills</h2>
         <ul className="list-none p-0 m-0">
           <li><strong>Expertise:</strong> {data.skills.map(s => s.name).join(', ')}</li>
         </ul>
       </section>
 
-      <section className="space-y-2">
-        <h2 className="text-[11pt] font-bold uppercase border-b border-black">Education</h2>
+      <section className="space-y-2 print:break-inside-avoid print:break-before-auto">
+        <h2 className="text-[11pt] font-bold uppercase border-b-[1px] border-black pb-1 mb-2">Education</h2>
         <ul className="list-none p-0 m-0 space-y-2">
           {data.education.map((edu, i) => (
             <li key={i} className="cv-print-block education-item flex justify-between">
@@ -242,11 +291,11 @@ function ATSPreview({ data }: { data: CVData }) {
       </section>
 
       {data.projects && data.projects.length > 0 && (
-        <section className="space-y-3">
-          <h2 className="text-[11pt] font-bold uppercase border-b border-black">Projects & Portfolio</h2>
+        <section className="space-y-3 print:break-inside-avoid print:break-before-auto">
+          <h2 className="text-[11pt] font-bold uppercase border-b-[1px] border-black pb-1 mb-2">Projects & Portfolio</h2>
           <div className="space-y-3">
             {data.projects.map((proj, i) => (
-              <article key={i} className="cv-print-block experience-item">
+              <article key={i} className="cv-print-block experience-item print:break-inside-avoid">
                 <header className="flex justify-between font-bold" style={{ display: 'flex' }}>
                   <h3>{proj.title} {proj.link && <span className="font-normal italic">| {proj.link}</span>}</h3>
                 </header>
@@ -261,8 +310,8 @@ function ATSPreview({ data }: { data: CVData }) {
       )}
 
       {data.certifications && data.certifications.length > 0 && (
-        <section className="space-y-2">
-          <h2 className="text-[11pt] font-bold uppercase border-b border-black">Certifications</h2>
+        <section className="space-y-2 print:break-inside-avoid print:break-before-auto">
+          <h2 className="text-[11pt] font-bold uppercase border-b-[1px] border-black pb-1 mb-2">Certifications</h2>
           <ul className="list-none p-0 m-0 space-y-1">
             {data.certifications.map((cert, i) => (
               <li key={i} className="cv-print-block">
@@ -274,8 +323,8 @@ function ATSPreview({ data }: { data: CVData }) {
       )}
 
       {data.languages && data.languages.length > 0 && (
-        <section className="cv-print-block space-y-2">
-          <h2 className="text-[11pt] font-bold uppercase border-b border-black">Languages</h2>
+        <section className="cv-print-block space-y-2 print:break-inside-avoid">
+          <h2 className="text-[11pt] font-bold uppercase border-b-[1px] border-black pb-1 mb-2">Languages</h2>
           <ul className="list-none p-0 m-0">
             <li>{data.languages.map(l => `${l.name} (${l.proficiency})`).join(', ')}</li>
           </ul>

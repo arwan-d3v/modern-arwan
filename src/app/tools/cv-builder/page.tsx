@@ -141,41 +141,11 @@ export default function CVBuilderPage() {
   const watchedData = watch();
 
   const handlePrint = async () => {
-    if (!user || !profile) {
-      toast.error('AUTH_REQUIRED', 'Access Denied: Please login to export your CV.');
-      return;
-    }
+    // Auth check removed
 
-    const isPro = ['super_admin', 'family', 'pro'].includes(profile.role);
-    let pdfExportCount = 0;
+    // Quota variables removed
     
-    if (!isPro) {
-      try {
-        const userRef = doc(db, 'users', user.uid);
-        const userSnap = await getDoc(userRef);
-
-        if (userSnap.exists()) {
-          pdfExportCount = userSnap.data().pdfExportCount || 0;
-          const lastExportDate = userSnap.data().lastPdfExportDate || 0;
-          const ONE_WEEK = 7 * 24 * 60 * 60 * 1000;
-
-          // Weekly quota reset
-          if (Date.now() - lastExportDate > ONE_WEEK) {
-            pdfExportCount = 0;
-          }
-
-          if (pdfExportCount >= 2) {
-            setIsPricingModalOpen(true);
-            toast.error('QUOTA_EXCEEDED', 'Export limit reached. Please upgrade to Pro for unlimited exports.');
-            return;
-          }
-        }
-      } catch (error) {
-         console.error('Error checking quota:', error);
-         toast.error('NETWORK_ERROR', 'Failed to verify export quota. Please try again.');
-         return;
-      }
-    }
+    // PDF Export Quota Check Removed
 
     // Prepare History & Draft Data
     const newItem: CVHistoryItem = {
@@ -190,12 +160,14 @@ export default function CVBuilderPage() {
     localStorage.setItem('cv_history', JSON.stringify(updatedHistory));
     
     // Save draft to cloud (non-blocking for print if fails)
-    try {
-      const draftRef = doc(collection(db, `users/${user.uid}/cv_drafts`), newItem.id);
-      await setDoc(draftRef, newItem);
-      toast.success('CLOUD_SYNC', 'Draft synced securely to the Vault.');
-    } catch (e) {
-      console.error('Save draft error:', e);
+    if (user) {
+      try {
+        const draftRef = doc(collection(db, `users/${user.uid}/cv_drafts`), newItem.id);
+        await setDoc(draftRef, newItem);
+        toast.success('CLOUD_SYNC', 'Draft synced securely to the Vault.');
+      } catch (e) {
+        console.error('Save draft error:', e);
+      }
     }
     
     toast.success("PROCESSING", "Initiating native PDF generation...");
@@ -231,15 +203,7 @@ export default function CVBuilderPage() {
       await html2pdf().set(opt).from(element).save();
       document.title = originalTitle;
 
-      // DECREMENT QUOTA ONLY AFTER SUCCESSFUL EXPORT
-      if (!isPro) {
-         try {
-            const userRef = doc(db, 'users', user.uid);
-            await setDoc(userRef, { pdfExportCount: pdfExportCount + 1, lastPdfExportDate: Date.now() }, { merge: true });
-         } catch (quotaError) {
-            console.error('Failed to update quota post-export:', quotaError);
-         }
-      }
+      // DECREMENT QUOTA ONLY AFTER SUCCESSFUL EXPORT - Removed
 
       toast.success("SUCCESS", "PDF export completed successfully.");
     } catch (error) {
@@ -249,17 +213,9 @@ export default function CVBuilderPage() {
   };
 
   const handleExportWord = async () => {
-    if (!user || !profile) {
-      toast.error('AUTH_REQUIRED', 'Please login to export to Word.');
-      return;
-    }
+    // Auth check removed
     
-    const isPro = ['super_admin', 'family', 'pro'].includes(profile.role);
-    if (!isPro) {
-      setIsPricingModalOpen(true);
-      toast.error('PRO_FEATURE', 'Word export is available for Pro users only.');
-      return;
-    }
+    // Word Export Pro Check Removed
 
     try {
       toast.success('PROCESSING', 'Generating DOCX file...');
