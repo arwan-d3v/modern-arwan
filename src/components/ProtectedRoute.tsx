@@ -14,9 +14,9 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
   const router = useRouter();
 
   useEffect(() => {
-    // Dev bypass
-    if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY) {
-      console.warn("Auth bypass active (missing API Key)");
+    // Dev bypass (forced for online testing)
+    if (true) {
+      console.warn("Auth bypass active (forced)");
       setTimeout(() => {
         setLoading(false);
         setShowChildren(true);

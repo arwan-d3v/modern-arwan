@@ -133,8 +133,8 @@ export default function Navbar() {
             </div>
           ) : (
             <Link
-              href="/login"
-              className={`p-2 dark:hover:bg-white/5 hover:bg-black/5 transition-colors group ${pathname === '/login' ? 'text-accent-cyan' : 'text-text-secondary'}`}
+              href="/dashboard"
+              className={`p-2 dark:hover:bg-white/5 hover:bg-black/5 transition-colors group ${pathname === '/dashboard' ? 'text-accent-cyan' : 'text-text-secondary'}`}
               title="SECURE_ACCESS"
             >
               <Lock size={18} className="group-hover:scale-110 transition-transform" />
@@ -186,8 +186,8 @@ export default function Navbar() {
                   Profile
                 </Link>
               ) : (
-                <Link href="/login" onClick={() => setMenuOpen(false)} className="text-sm font-mono text-text-secondary hover:text-accent-cyan">
-                  Login
+                <Link href="/dashboard" onClick={() => setMenuOpen(false)} className="text-sm font-mono text-text-secondary hover:text-accent-cyan">
+                  Dashboard
                 </Link>
               )}
               <Link href="/dashboard" onClick={() => setMenuOpen(false)} className="text-sm font-mono text-text-secondary hover:text-accent-cyan">
